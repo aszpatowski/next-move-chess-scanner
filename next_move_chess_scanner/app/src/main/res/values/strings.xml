@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Next Move: Chess Scanner</string>
+    <string name="scan">SCAN</string>
+    <string name="source">Source: -</string>
+</resources>

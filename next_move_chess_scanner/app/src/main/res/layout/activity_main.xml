@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        app:srcCompat="@drawable/chessboard"
+        tools:ignore="ImageContrastCheck" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="8">
+
+        <TextView
+            android:id="@+id/source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/source"
+            android:textSize="15sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/scan"
+            app:layout_constraintEnd_toStartOf="@+id/scan"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/scan"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="40dp"
+            android:paddingLeft="40dp"
+            android:text="@string/scan"
+            android:textSize="15sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/reverse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:showAsAction="ifRoom|collapseActionView" />
+
+        <Button
+            android:id="@+id/reverse"
+            android:layout_width="38dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            app:icon="@drawable/ic_baseline_repeat_24"
+            app:layout_constraintEnd_toStartOf="@+id/settings"
+            app:layout_constraintStart_toEndOf="@+id/scan" />
+
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="38dp"
+            android:paddingStart="8dp"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_baseline_settings_24"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:orientation="horizontal">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    </LinearLayout>
+
+
+</LinearLayout>
