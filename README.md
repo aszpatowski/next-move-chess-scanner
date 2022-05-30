@@ -16,8 +16,8 @@ Realized for “Project of Mobile Application” classes. Semestr 6, 2022.
 - Canvas (draw chessboard and pieces)
 ## Schemes of working
 ### 1
-<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/sketch/scheme1.drawio.png'>
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/sketch/scheme1.drawio.jpg'>
 
 ### 2
-<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/sketch/scheme2.drawio.png'>
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/sketch/scheme2.drawio.jpg'>
 
