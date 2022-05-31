@@ -2,6 +2,7 @@ package com.example.next_move_chess_scanner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
 
     private List<Move> moveList;
     private final LayoutInflater inflater;
+    int selectedPosition=0;
 
     public MoveListAdapter(Context context, List<Move> moveList) {
         inflater = LayoutInflater.from(context);
@@ -43,7 +45,8 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
 
         @Override
         public void onClick(View view) {
-
+            selectedPosition = getAdapterPosition();
+            notifyDataSetChanged();
         }
 
     }
@@ -63,11 +66,11 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         holder.moveWinrate.setText(String.valueOf(current.getWinrate()));
         holder.moveNote.setText(current.getNote());
 
-        if (current.isSelected()){
-
+        if (selectedPosition==position){
+            holder.itemView.setBackgroundColor(Color.parseColor("#cbfac3"));
         }
         else{
-
+            holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
     }
 

@@ -14,6 +14,11 @@
         android:layout_weight="4"
         app:srcCompat="@drawable/chessboard"
         tools:ignore="ImageContrastCheck" />
+    <com.example.next_move_chess_scanner.ChessView
+    android:id="@+id/chess_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,20 +33,32 @@
             android:layout_height="wrap_content"
             android:text="@string/source"
             android:textSize="15sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/scan"
-            app:layout_constraintEnd_toStartOf="@+id/scan"
+            app:layout_constraintBaseline_toBaselineOf="@+id/getMoves"
+            app:layout_constraintEnd_toStartOf="@+id/getMoves"
+            app:layout_constraintHorizontal_bias="0.11"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/scan"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingRight="40dp"
-            android:paddingLeft="40dp"
             android:text="@string/scan"
-            android:textSize="15sp"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/getMoves"
+            app:layout_constraintEnd_toEndOf="@+id/getMoves"
+            app:layout_constraintHorizontal_bias="0.346"
+            app:layout_constraintStart_toStartOf="@+id/source"
+            app:showAsAction="ifRoom|collapseActionView" />
+
+        <Button
+            android:id="@+id/getMoves"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/getMoves"
+            android:textSize="14sp"
             app:layout_constraintBaseline_toBaselineOf="@+id/reverse"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.649"
             app:layout_constraintStart_toStartOf="parent"
             app:showAsAction="ifRoom|collapseActionView" />
 
@@ -52,7 +69,9 @@
             android:paddingStart="8dp"
             app:icon="@drawable/ic_baseline_repeat_24"
             app:layout_constraintEnd_toStartOf="@+id/settings"
-            app:layout_constraintStart_toEndOf="@+id/scan" />
+            app:layout_constraintHorizontal_bias="0.615"
+            app:layout_constraintStart_toEndOf="@+id/getMoves"
+            tools:layout_editor_absoluteY="0dp" />
 
         <Button
             android:id="@+id/settings"

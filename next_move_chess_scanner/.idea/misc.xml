@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/drawable/ic_baseline_repeat_24.xml" value="0.171" />
+        <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.171" />
         <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/drawable/ic_chess_board.xml" value="0.224" />
-        <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/drawable/ic_wp.xml" value="0.1" />
+        <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/layout/activity_cropper.xml" value="0.18885869565217392" />
+        <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/layout/activity_main.xml" value="0.21348314606741572" />
         <entry key="..\:/Users/Szpaku/Desktop/chess_app/next-move-chess-scanner/next_move_chess_scanner/app/src/main/res/layout/move_list_item.xml" value="0.2193211488250653" />
       </map>
     </option>
