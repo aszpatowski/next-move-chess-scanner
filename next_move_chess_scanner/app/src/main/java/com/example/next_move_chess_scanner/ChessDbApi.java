@@ -73,7 +73,6 @@ public class ChessDbApi {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //textView.setText("That didn't work!");
                 Log.d(Tag, "That didn't work!");
             }
         });

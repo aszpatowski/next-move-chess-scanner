@@ -19,9 +19,19 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     private List<Move> moveList;
     private final LayoutInflater inflater;
     int selectedPosition=0;
+    private AdapterCallback mAdapterCallback;
 
     public MoveListAdapter(Context context, List<Move> moveList) {
         inflater = LayoutInflater.from(context);
+        this.moveList = moveList;
+        try {
+            this.mAdapterCallback = ((AdapterCallback) context);
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement AdapterCallback.");
+        }
+    }
+
+    public void setMoveList(List<Move> moveList) {
         this.moveList = moveList;
     }
 
@@ -46,6 +56,7 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         @Override
         public void onClick(View view) {
             selectedPosition = getAdapterPosition();
+            mAdapterCallback.onMethodCallback(moveList.get(selectedPosition).getUCImove());
             notifyDataSetChanged();
         }
 
@@ -72,10 +83,14 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         else{
             holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
+
     }
 
     @Override
     public int getItemCount() {
         return moveList.size();
+    }
+    public static interface AdapterCallback {
+        void onMethodCallback(String yourValue);
     }
 }
