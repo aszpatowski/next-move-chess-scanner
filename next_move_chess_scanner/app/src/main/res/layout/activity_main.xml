@@ -20,7 +20,7 @@
 
     <com.example.next_move_chess_scanner.ChessView
         android:id="@+id/chess_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="4"
         android:gravity="center"
@@ -28,81 +28,133 @@
         />
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="8">
+        android:layout_weight="7"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/source"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/source"
-            android:textSize="15sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/getMoves"
-            app:layout_constraintEnd_toStartOf="@+id/getMoves"
-            app:layout_constraintHorizontal_bias="0.11"
-            app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/scan"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/scan"
-            android:textSize="14sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/getMoves"
-            app:layout_constraintEnd_toEndOf="@+id/getMoves"
-            app:layout_constraintHorizontal_bias="0.346"
-            app:layout_constraintStart_toStartOf="@+id/source"
-            app:showAsAction="ifRoom|collapseActionView" />
-
-        <Button
-            android:id="@+id/getMoves"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/getMoves"
-            android:textSize="14sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/reverse"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.649"
-            app:layout_constraintStart_toStartOf="parent"
-            app:showAsAction="ifRoom|collapseActionView" />
-
-        <Button
-            android:id="@+id/reverse"
-            android:layout_width="38dp"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            app:icon="@drawable/ic_baseline_repeat_24"
-            app:layout_constraintEnd_toStartOf="@+id/settings"
-            app:layout_constraintHorizontal_bias="0.615"
-            app:layout_constraintStart_toEndOf="@+id/getMoves"
-            tools:layout_editor_absoluteY="0dp" />
 
         <Button
             android:id="@+id/settings"
-            android:layout_width="38dp"
-            android:paddingStart="8dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginVertical="0dp"
             app:icon="@drawable/ic_baseline_settings_24"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:backgroundTint="@color/rarified_air"/>
+        <Button
+            android:id="@+id/scan"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="match_parent"
+            android:text="@string/scan"
+            android:layout_marginHorizontal="3dp"
+            android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/getMoves"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="match_parent"
+            android:text="@string/getMoves"
+            android:layout_marginHorizontal="3dp"
+            android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/reverse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            app:icon="@drawable/ic_baseline_repeat_24"
+            android:layout_marginHorizontal="3dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"/>
+        <Button
+            android:id="@+id/scanInfo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp"
+            android:enabled="false"
+            app:icon="@drawable/ic_baseline_insights_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            android:textSize="14sp"
+            app:backgroundTint="@color/dainty_peach"/>
+
+    </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:orientation="horizontal">
+        android:layout_weight="4"
+        android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/UCImoveInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:text="@string/UCImoveInfo"
+                android:textSize="15dp"
+                android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/scoreInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:text="@string/scoreInfo"
+                android:textSize="15dp"
+                android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/winrateInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="@string/winrateInfo"
+                android:textSize="15dp"
+                android:textAlignment="center"/>
+            <TextView
+                android:id="@+id/noteInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="@string/noteInfo"
+                android:textSize="15dp"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="5"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </LinearLayout>
     </LinearLayout>
+
 
 
 </LinearLayout>

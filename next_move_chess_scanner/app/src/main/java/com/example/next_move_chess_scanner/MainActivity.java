@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     private ChessDbApi chessDbApi = new ChessDbApi(this);
     private List<Move> moveList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
     private Uri imageOfChessboard;
-    private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
+    //private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
+    private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
     ActivityResultLauncher <String> mGetContent;
     ChessView chessView;
     @Override
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         builder.setView(input);
 
         // Set up the buttons
-
 
         buttonScan.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 resultUri = Uri.parse(result);
             }
             imageOfChessboard = resultUri;
-            Log.d("IMAGE", "IMAGE LOADED" );
+            Log.d("IMAGE", "IMAGE LOADED");
         }
     }
 
@@ -155,8 +155,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         super.onResume();
         moveListAdapter.notifyDataSetChanged();
     }
-
-
 
 
 }

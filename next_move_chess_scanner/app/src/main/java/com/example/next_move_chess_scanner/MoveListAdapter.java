@@ -78,7 +78,7 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         holder.moveNote.setText(current.getNote());
 
         if (selectedPosition==position){
-            holder.itemView.setBackgroundColor(Color.parseColor("#cbfac3"));
+            holder.itemView.setBackgroundColor(Color.parseColor("#9DE0AD"));
         }
         else{
             holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Next Move: Chess Scanner</string>
-    <string name="scan">SCAN</string>
-    <string name="source">Source: -</string>
+    <string name="scan">Scan</string>
     <string name="getMoves">Get Moves</string>
+    <string name="UCImoveInfo">Move</string>
+    <string name="scoreInfo">Score</string>
+    <string name="winrateInfo">Chance to win</string>
+    <string name="noteInfo">Note</string>
 </resources>

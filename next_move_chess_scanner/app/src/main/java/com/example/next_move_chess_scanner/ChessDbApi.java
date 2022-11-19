@@ -33,9 +33,10 @@ public class ChessDbApi {
     }
 
     public List<Move> sendRequest(String fenNotation) {
+        Log.d(Tag, "get string: " + fenNotation);
         String completedURL = baseUrl + fenNotation + returnJson;
         RequestQueue queue = Volley.newRequestQueue(this.ctx);
-
+        Log.d(Tag, "get url: " + completedURL);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, completedURL,null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -46,15 +47,9 @@ public class ChessDbApi {
                         try {
                             Log.d(Tag, "Response is: " + response.getString("status"));
                             JSONArray moves = response.getJSONArray("moves");
-                            JSONObject move = moves.getJSONObject(0);
-                            movesList.add(new Move(move.getString("uci"),
-                                    move.getString("san"),
-                                    move.getInt("score"),
-                                    move.getInt("rank"),
-                                    move.getString("note").substring(0,2),
-                                    move.getString("winrate"),
-                                    true));
-                            for(int i = 1;i< moves.length();i++)
+                            JSONObject move;
+                            movesList.clear();
+                            for(int i = 0; i< moves.length();i++)
                             {
                                 move = moves.getJSONObject(i);
                                 movesList.add(new Move(move.getString("uci"),

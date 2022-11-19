@@ -9,9 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.graphics.Color;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+
+import androidx.core.content.ContextCompat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +24,10 @@ class ChessView extends View {
     Map<Character, Integer> UCItoNumbers = new HashMap<Character, Integer>();
     int lightColor;
     int darkColor;
+    int markedColor;
+    int pointerColor;
     Paint paint = new Paint();
-    String currentFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
+    String currentFen;
     String pointer = "";
     boolean isPointer = false;
     boolean white = true;
@@ -48,8 +51,13 @@ class ChessView extends View {
         pieces.put("pawn_white", R.drawable.ic_wp);
         pieces.put("queen_white", R.drawable.ic_wq);
         pieces.put("rook_white", R.drawable.ic_wr);
-        lightColor = Color.parseColor("#EEEEEE");
-        darkColor = Color.parseColor("#BBBBBB");
+//        lightColor = Color.parseColor("#F4EBDB");
+//        darkColor = Color.parseColor("#537072");
+//        markedColor = Color.parseColor("#9DE0AD");
+        lightColor = ContextCompat.getColor(context, R.color.modern_ivory);
+        darkColor = ContextCompat.getColor(context, R.color.juniper_berries);
+        markedColor = ContextCompat.getColor(context, R.color.marked);
+        pointerColor = ContextCompat.getColor(context, R.color.black);
         loadBitmaps();
         fenToNames.put('k', "king_black");
         fenToNames.put('q', "queen_black");
@@ -90,8 +98,8 @@ class ChessView extends View {
         //canvas.drawColor(Color.WHITE, PorterDuff.Mode.CLEAR);
         drawChessboard(canvas);
         if (isPointer) {
-            highliteSquareAt(canvas, UCItoNumbers.get(pointer.charAt(0)), UCItoNumbers.get(pointer.charAt(1)), Color.parseColor("#cbfac3"));
-            highliteSquareAt(canvas, UCItoNumbers.get(pointer.charAt(2)), UCItoNumbers.get(pointer.charAt(3)), Color.parseColor("#cbfac3"));
+            highlightSquareAt(canvas, UCItoNumbers.get(pointer.charAt(0)), UCItoNumbers.get(pointer.charAt(1)), markedColor);
+            highlightSquareAt(canvas, UCItoNumbers.get(pointer.charAt(2)), UCItoNumbers.get(pointer.charAt(3)), markedColor);
         }
         drawFromFen(canvas);
 
@@ -114,7 +122,7 @@ class ChessView extends View {
         canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
     }
 
-    protected void highliteSquareAt(Canvas canvas, int col, int row, int color) {
+    protected void highlightSquareAt(Canvas canvas, int col, int row, int color) {
         paint.setColor(color);
         if(white)
             canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
@@ -169,15 +177,17 @@ class ChessView extends View {
         int column = 0;
         int addColumns = 1;
         while (currentFen.charAt(i) != space) {
-            Log.d("ChessView", " char" + currentFen.charAt(i));
+            Log.d("ChessView", " char: " + currentFen.charAt(i));
             if (Character.isDigit(currentFen.charAt(i))) {
-                addColumns = (int) currentFen.charAt(i);
-            } else if (currentFen.charAt(i) == slash) {
+                addColumns = Character.getNumericValue(currentFen.charAt(i));
+            }
+            else if (currentFen.charAt(i) == slash) {
                 column = 0;
                 row++;
                 i += 1;
                 continue;
-            } else {
+            }
+            else {
                 if(white)
                     drawPieceAt(canvas, row, column, fenToNames.get(currentFen.charAt(i)));
                 else
@@ -192,7 +202,7 @@ class ChessView extends View {
     }
 
     private void drawPointer(Canvas canvas) {
-        paint.setColor(Color.GREEN);
+        paint.setColor(markedColor);
         paint.setStrokeWidth(10f);
         Log.d("ChessView- pointer  ", pointer + " " + (UCItoNumbers.get(pointer.charAt(0))) + " " + (UCItoNumbers.get(pointer.charAt(1))) + " " + (UCItoNumbers.get(pointer.charAt(2))) + " " + (UCItoNumbers.get(pointer.charAt(3))));
         canvas.drawLine(originX + cellSide / 2 + UCItoNumbers.get(pointer.charAt(0)) * cellSide, originY + cellSide / 2 + UCItoNumbers.get(pointer.charAt(1)) * cellSide, originX + cellSide / 2 + UCItoNumbers.get(pointer.charAt(2)) * cellSide, originY + cellSide / 2 + UCItoNumbers.get(pointer.charAt(3)) * cellSide, paint);
