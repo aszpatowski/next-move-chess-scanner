@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -25,30 +26,36 @@ import org.opencv.android.OpenCVLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class MainActivity extends AppCompatActivity implements MoveListAdapter.AdapterCallback {
 
     private RecyclerView recyclerView;
     private MoveListAdapter moveListAdapter;
-    private ChessDbApi chessDbApi = new ChessDbApi(this);
     private List<Move> moveList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
     private Uri imageOfChessboard;
+    private ChessDbApi chessDbApi = new ChessDbApi(this);
     //private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
     private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
     ActivityResultLauncher <String> mGetContent;
     ChessView chessView;
+    public Button switchSidesButton;
+    public Button scanButton;
+    public Button settingsButton;
+    public Button getMovesButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("OpenCV", "OpenCv Loading status " + OpenCVLoader.initDebug());
 
-        final Button switchSides = findViewById(R.id.reverse);
-        final Button buttonScan = findViewById(R.id.scan);
-        final Button settings = findViewById(R.id.settings);
+        switchSidesButton = findViewById(R.id.reverse);
+        scanButton = findViewById(R.id.scan);
+        settingsButton = findViewById(R.id.settings);
+        getMovesButton = findViewById(R.id.getMoves);
 
-        moveList.add(new Move(" ", " ",0,0," "," ", false));
-        moveList = chessDbApi.sendRequest(currentPosition);
+        //moveList.add(new Move(" ", " ",0,0," "," ", false));
+        new RequestDbApiTask().execute(currentPosition);
         recyclerView = findViewById(R.id.recyclerView);
 
         moveListAdapter = new MoveListAdapter(this, moveList);
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         chessView = findViewById(R.id.chess_view);
         chessView.setFen(currentPosition);
+        new ChangeChessViewTask().execute();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -69,25 +77,27 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         // Set up the buttons
 
-        buttonScan.setOnClickListener(new View.OnClickListener() {
+        scanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGetContent.launch("image/*");
             }
         });
-        switchSides.setOnClickListener(new View.OnClickListener() {
+        switchSidesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 chessView.changeSides();
+                new ChangeChessViewTask().execute();
             }
         });
-        settings.setOnClickListener(new View.OnClickListener() {
+        settingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         currentPosition = input.getText().toString();
                         Log.d("XD", "OpenCv Loading status " + currentPosition);
-                        chessDbApi.sendRequest(currentPosition);
+                        new RequestDbApiTask().execute(currentPosition);
                         chessView.setFen(currentPosition);
+                        new ChangeChessViewTask().execute();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -100,14 +110,12 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             }
         });
 
-        final Button buttonGetMoves = findViewById(R.id.getMoves);
-        buttonGetMoves.setOnClickListener(new View.OnClickListener() {
+        getMovesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                moveList = chessDbApi.getMovesList();
                 moveListAdapter.setMoveList(moveList);
                 recyclerView.setAdapter(moveListAdapter);
-                moveListAdapter.notifyDataSetChanged();
                 chessView.setPointer(moveList.get(0).getUCImove());
+                new ChangeChessViewTask().execute();
             }
         });
 
@@ -124,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     @Override
     public void onMethodCallback(String yourValue) {
         chessView.setPointer(yourValue);
+        new ChangeChessViewTask().execute();
     }
 
     @Override
@@ -153,8 +162,32 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     @Override
     protected void onResume() {
         super.onResume();
-        moveListAdapter.notifyDataSetChanged();
     }
 
+    private class RequestDbApiTask extends AsyncTask<String, Void, Void>{
 
+        protected void onPreExecute (){
+            getMovesButton.setEnabled(false);
+        }
+        @Override
+        protected Void doInBackground(String... fenNotation) {
+            chessDbApi.sendRequest(fenNotation[0]);
+            return null;
+        }
+        protected void onPostExecute(Void result) {
+            moveList = chessDbApi.getMovesList();
+            getMovesButton.setEnabled(true);
+        }
+
+    }
+    private class ChangeChessViewTask extends AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            chessView.refreshChessView();
+            return null;
+        }
+
+
+    }
 }

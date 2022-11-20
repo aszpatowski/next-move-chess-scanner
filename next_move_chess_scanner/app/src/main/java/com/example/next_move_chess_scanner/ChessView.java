@@ -51,9 +51,6 @@ class ChessView extends View {
         pieces.put("pawn_white", R.drawable.ic_wp);
         pieces.put("queen_white", R.drawable.ic_wq);
         pieces.put("rook_white", R.drawable.ic_wr);
-//        lightColor = Color.parseColor("#F4EBDB");
-//        darkColor = Color.parseColor("#537072");
-//        markedColor = Color.parseColor("#9DE0AD");
         lightColor = ContextCompat.getColor(context, R.color.modern_ivory);
         darkColor = ContextCompat.getColor(context, R.color.juniper_berries);
         markedColor = ContextCompat.getColor(context, R.color.marked);
@@ -150,21 +147,20 @@ class ChessView extends View {
     public void setFen(String fenNotation) {
         currentFen = fenNotation;
         isPointer = false;
-        invalidate();
     }
 
-    ;
 
     public void setPointer(String pointerLoc) {
         pointer = pointerLoc;
         isPointer = true;
-        invalidate();
     }
     public void changeSides(){
         if (white==true)
             white= false;
         else
             white= true;
+    }
+    public void refreshChessView(){
         invalidate();
     }
 

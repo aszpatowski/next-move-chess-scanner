@@ -16,14 +16,6 @@
             android:textSize="30dp"
             android:textAlignment="center"/>
         <TextView
-            android:id="@+id/score"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:layout_weight="1"
-            android:textSize="25dp"
-            android:textAlignment="center"/>
-        <TextView
             android:id="@+id/winrate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

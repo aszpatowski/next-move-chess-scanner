@@ -38,7 +38,6 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     class MoveViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public final TextView moveUCI;
-        public final TextView moveScore;
         public final TextView moveWinrate;
         public final TextView moveNote;
         final MoveListAdapter adapter;
@@ -46,7 +45,6 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         public MoveViewHolder(@NonNull View itemView, MoveListAdapter adapter) {
             super(itemView);
             moveUCI = itemView.findViewById(R.id.UCImove);
-            moveScore = itemView.findViewById(R.id.score);
             moveWinrate = itemView.findViewById(R.id.winrate);
             moveNote = itemView.findViewById(R.id.note);
             this.adapter = adapter;
@@ -55,9 +53,11 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
 
         @Override
         public void onClick(View view) {
+            int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
             mAdapterCallback.onMethodCallback(moveList.get(selectedPosition).getUCImove());
-            notifyDataSetChanged();
+            notifyItemChanged(previousPosition);
+            notifyItemChanged(selectedPosition);
         }
 
     }
@@ -73,7 +73,6 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     public void onBindViewHolder(@NonNull MoveListAdapter.MoveViewHolder holder, int position) {
         Move current = moveList.get(position);
         holder.moveUCI.setText(current.getUCImove());
-        holder.moveScore.setText(String.valueOf(current.getScore()));
         holder.moveWinrate.setText(String.valueOf(current.getWinrate()));
         holder.moveNote.setText(current.getNote());
 

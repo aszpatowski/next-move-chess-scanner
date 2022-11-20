@@ -1,6 +1,7 @@
 package com.example.next_move_chess_scanner;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChessDbApi {
+public class ChessDbApi{
     private static List<Move> movesList = new ArrayList<>();
     private static final String baseUrl = "https://www.chessdb.cn/cdb.php?action=queryall&board=";
     private static final String returnJson = "&json=1";
@@ -33,17 +34,12 @@ public class ChessDbApi {
     }
 
     public List<Move> sendRequest(String fenNotation) {
-        Log.d(Tag, "get string: " + fenNotation);
         String completedURL = baseUrl + fenNotation + returnJson;
         RequestQueue queue = Volley.newRequestQueue(this.ctx);
-        Log.d(Tag, "get url: " + completedURL);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, completedURL,null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // Display the first 500 characters of the response string.
-                        //textView.setText("Response is: " + response.substring(0,500));
-                        //Log.d(Tag, "Response is: " + response.substring(0,500));
                         try {
                             Log.d(Tag, "Response is: " + response.getString("status"));
                             JSONArray moves = response.getJSONArray("moves");
@@ -81,4 +77,17 @@ public class ChessDbApi {
     public List<Move> getMovesList() {
         return movesList;
     }
+
+    //@Override
+    //protected Void doInBackground(String... voids) {
+    //    return null;
+   // }
+//    @Override
+//    protected void onProgressUpdate(Void... progress) {
+//        return null;
+//    }
+//    @Override
+//    protected void onPostExecute(Void result) {
+//        return null;
+//    }
 }
