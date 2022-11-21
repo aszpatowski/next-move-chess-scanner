@@ -6,4 +6,9 @@
     <string name="scoreInfo">Score</string>
     <string name="winrateInfo">Chance to win</string>
     <string name="noteInfo">Note</string>
+    <string name="fen_position">FEN position</string>
+    <string name="fieldInfo">Field</string>
+    <string name="fieldPhotoInfo">Photo</string>
+    <string name="recognizedPieceInfo">Recognized piece</string>
+    <string name="confidenceInfo">Confidence</string>
 </resources>

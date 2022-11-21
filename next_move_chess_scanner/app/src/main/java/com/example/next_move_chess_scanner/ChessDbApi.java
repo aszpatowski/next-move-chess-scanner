@@ -55,6 +55,9 @@ public class ChessDbApi{
                                         move.getString("note").substring(0,2),
                                         move.getString("winrate"),
                                         false));
+                                if (i>=10){
+                                    break;
+                                }
                                 Log.d(Tag, "move is: " + move.getString("score"));
                             }
                         } catch (JSONException e) {
@@ -70,7 +73,6 @@ public class ChessDbApi{
 
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
-
         return movesList;
     }
 

@@ -12,47 +12,54 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class MainActivity extends AppCompatActivity implements MoveListAdapter.AdapterCallback {
 
     private RecyclerView recyclerView;
     private MoveListAdapter moveListAdapter;
     private List<Move> moveList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
-    private Uri imageOfChessboard;
+    private List<Piece> pieceList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
+    private Bitmap imageOfChessboard;
     private ChessDbApi chessDbApi = new ChessDbApi(this);
     //private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
     private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
     ActivityResultLauncher <String> mGetContent;
     ChessView chessView;
-    public Button switchSidesButton;
+    public Button reverseButton;
     public Button scanButton;
-    public Button settingsButton;
+    public Button textFenButton;
     public Button getMovesButton;
+    public Button scanInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("OpenCV", "OpenCv Loading status " + OpenCVLoader.initDebug());
 
-        switchSidesButton = findViewById(R.id.reverse);
+        reverseButton = findViewById(R.id.reverse);
         scanButton = findViewById(R.id.scan);
-        settingsButton = findViewById(R.id.settings);
+        textFenButton = findViewById(R.id.text_fen);
         getMovesButton = findViewById(R.id.getMoves);
+        scanInfo = findViewById(R.id.scanInfo);
 
         //moveList.add(new Move(" ", " ",0,0," "," ", false));
         new RequestDbApiTask().execute(currentPosition);
@@ -67,46 +74,60 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         chessView.setFen(currentPosition);
         new ChangeChessViewTask().execute();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
         final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        AlertDialog.Builder FENDialogBuilder = new AlertDialog.Builder(this)
+                .setView(input)
+                .setCancelable(false)
+                .setTitle("Enter position in FEN notation")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (input.getText().toString().length()>0){
+                            currentPosition = input.getText().toString();
+                            new RequestDbApiTask().execute(currentPosition);
+                            chessView.setFen(currentPosition);
+                            new ChangeChessViewTask().execute();
+                        }
+                        else{
+                            Toast.makeText(MainActivity.this,"Empty", Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.cancel();
+                        return;
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivity.this,"Canceled", Toast.LENGTH_SHORT).show();
+                        dialog.cancel();
+                        return;
+                    }
+                });
+        AlertDialog FENdialog = FENDialogBuilder.create();
+
 
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+
 
         // Set up the buttons
+
+        textFenButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FENdialog.show();
+            }
+        });
+
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mGetContent.launch("image/*");
             }
         });
-        switchSidesButton.setOnClickListener(new View.OnClickListener() {
+        reverseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 chessView.changeSides();
                 new ChangeChessViewTask().execute();
-            }
-        });
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        currentPosition = input.getText().toString();
-                        Log.d("XD", "OpenCv Loading status " + currentPosition);
-                        new RequestDbApiTask().execute(currentPosition);
-                        chessView.setFen(currentPosition);
-                        new ChangeChessViewTask().execute();
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
             }
         });
 
@@ -116,6 +137,17 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 recyclerView.setAdapter(moveListAdapter);
                 chessView.setPointer(moveList.get(0).getUCImove());
                 new ChangeChessViewTask().execute();
+                moveListAdapter.notifyDataSetChanged();
+            }
+        });
+
+        scanInfo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("PIECES_LIST", (ArrayList<? extends Parcelable>) pieceList);
+                Intent intent = new Intent(MainActivity.this, PiecesActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -147,7 +179,16 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             {
                 resultUri = Uri.parse(result);
             }
-            imageOfChessboard = resultUri;
+            try {
+                Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                imageOfChessboard = image.copy(image.getConfig(), true);
+                imageOfChessboard = changeResolution(imageOfChessboard);
+                pieceList = createPieceList(imageOfChessboard, true);
+                scanInfo.setEnabled(true);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Log.d("IMAGE", "IMAGE LOADED");
         }
     }
@@ -190,4 +231,42 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
 
     }
+    public Bitmap changeResolution(Bitmap image){
+        Log.d("IMAGE", "Height: " + image.getHeight() + "  Width: " + image.getWidth());
+        Bitmap scaled = Bitmap.createScaledBitmap(image,256,256,true);
+        return scaled;
+    }
+    public List<Bitmap> divideChessboard(Bitmap chessboard){
+        int imageSize = 32;
+        List<Bitmap> dividedBitmap = new ArrayList<>();
+        for(int row = 0; row<8;row++){
+            for(int column = 0; column<8;column++){
+                dividedBitmap.add(Bitmap.createBitmap(chessboard,imageSize*row,imageSize*column,imageSize,imageSize));
+            }
+        }
+        return dividedBitmap;
+    }
+    public List<Piece> createPieceList(Bitmap chessboard, boolean isWhite){
+        List<Bitmap> imageList = divideChessboard(chessboard);
+        String alphabet = "ABCDEFGH";
+        String numbers = "87654321";
+        if(!isWhite)
+        {
+            numbers = "12345678";
+        }
+        String field;
+        List<Piece> tempList = new ArrayList<>();
+        int imageNumber = 0;
+        float confidence = 1.00f;
+        for(char number: numbers.toCharArray()){
+            for(char letter: alphabet.toCharArray()){
+                field = letter + Character.toString(number);
+                tempList.add(new Piece(field, imageList.get(imageNumber), "None", confidence));
+                imageNumber++;
+            }
+        }
+        return tempList;
+    }
+
+
 }

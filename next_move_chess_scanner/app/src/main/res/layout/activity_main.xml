@@ -38,13 +38,13 @@
 
 
         <Button
-            android:id="@+id/settings"
+            android:id="@+id/text_fen"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp"
             android:layout_marginVertical="0dp"
-            app:icon="@drawable/ic_baseline_settings_24"
+            app:icon="@drawable/ic_baseline_text_fen_24"
             app:iconGravity="textStart"
             app:iconPadding="0dp" />
         <Button
@@ -84,8 +84,7 @@
             app:icon="@drawable/ic_baseline_insights_24"
             app:iconGravity="textStart"
             app:iconPadding="0dp"
-            android:textSize="14sp"
-            app:backgroundTint="@color/modern_ivory"/>
+            android:textSize="14sp"/>
 
     </LinearLayout>
 

@@ -12,6 +12,7 @@ public class Move {
     }
 
     public String getUCImove() {
+
         return UCImove;
     }
 
