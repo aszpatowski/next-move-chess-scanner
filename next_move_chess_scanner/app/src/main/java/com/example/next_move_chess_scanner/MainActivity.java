@@ -20,15 +20,21 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.next_move_chess_scanner.ml.BlackModel;
+
 import org.opencv.android.OpenCVLoader;
+import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     private List<Piece> pieceList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
     private Bitmap imageOfChessboard;
     private ChessDbApi chessDbApi = new ChessDbApi(this);
+    private PieceClassifier pieceClassifier = new PieceClassifier(this);
     //private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
     private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
     ActivityResultLauncher <String> mGetContent;
@@ -135,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             public void onClick(View v) {
                 moveListAdapter.setMoveList(moveList);
                 recyclerView.setAdapter(moveListAdapter);
-                chessView.setPointer(moveList.get(0).getUCImove());
+                chessView.setPointer(moveList.get(0).getUCIMove());
                 new ChangeChessViewTask().execute();
                 moveListAdapter.notifyDataSetChanged();
             }
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     }
     public Bitmap changeResolution(Bitmap image){
         Log.d("IMAGE", "Height: " + image.getHeight() + "  Width: " + image.getWidth());
-        Bitmap scaled = Bitmap.createScaledBitmap(image,256,256,true);
+        Bitmap scaled = Bitmap.createScaledBitmap(image,256,256, true);
         return scaled;
     }
     public List<Bitmap> divideChessboard(Bitmap chessboard){
@@ -258,15 +265,18 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         List<Piece> tempList = new ArrayList<>();
         int imageNumber = 0;
         float confidence = 1.00f;
+        boolean isWhiteField = false;
         for(char number: numbers.toCharArray()){
+            isWhiteField = !isWhiteField;
             for(char letter: alphabet.toCharArray()){
                 field = letter + Character.toString(number);
-                tempList.add(new Piece(field, imageList.get(imageNumber), "None", confidence));
+                Pair<String, Float> pieceWithProbabilities = pieceClassifier.recognizePiece(imageList.get(imageNumber), isWhiteField);
+                tempList.add(new Piece(field, imageList.get(imageNumber), pieceWithProbabilities.first, pieceWithProbabilities.second));
+                isWhiteField = !isWhiteField;
                 imageNumber++;
             }
         }
         return tempList;
     }
-
 
 }

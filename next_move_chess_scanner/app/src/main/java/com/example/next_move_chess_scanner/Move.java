@@ -1,47 +1,29 @@
 package com.example.next_move_chess_scanner;
 
 public class Move {
-    public Move(String UCImove, String SANmove, int score, int rank, String note, String winrate, boolean selected) {
-        this.UCImove = UCImove;
-        this.SANmove = SANmove;
-        this.score = score;
-        this.rank = rank;
+    public Move(String UCImove, String SANmove, String note, String winrate, boolean selected) {
+        this.UCIMove = UCImove;
+        this.SANMove = SANmove;
         this.note = note;
-        this.winrate = winrate;
+        this.winRate = winrate;
         this.selected = selected;
     }
 
-    public String getUCImove() {
+    public String getUCIMove() {
 
-        return UCImove;
+        return UCIMove;
     }
 
-    public void setUCImove(String UCImove) {
-        this.UCImove = UCImove;
+    public void setUCIMove(String UCIMove) {
+        this.UCIMove = UCIMove;
     }
 
-    public String getSANmove() {
-        return SANmove;
+    public String getSANMove() {
+        return SANMove;
     }
 
-    public void setSANmove(String SANmove) {
-        this.SANmove = SANmove;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
+    public void setSANMove(String SANMove) {
+        this.SANMove = SANMove;
     }
 
     public String getNote() {
@@ -60,20 +42,18 @@ public class Move {
         this.selected = selected;
     }
 
-    public String getWinrate() {
-        return winrate;
+    public String getWinRate() {
+        return winRate;
     }
 
-    public void setWinrate(String winrate) {
-        this.winrate = winrate;
+    public void setWinRate(String winRate) {
+        this.winRate = winRate;
     }
 
-    private String UCImove;
-    private String SANmove;
-    private int score;
-    private int rank;
+    private String UCIMove;
+    private String SANMove;
     private String note;
-    private String winrate;
+    private String winRate;
     private boolean selected;
 
 }

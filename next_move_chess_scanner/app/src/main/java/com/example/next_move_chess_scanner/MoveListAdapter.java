@@ -1,15 +1,13 @@
 package com.example.next_move_chess_scanner;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -18,8 +16,12 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
 
     private List<Move> moveList;
     private final LayoutInflater inflater;
-    int selectedPosition=0;
     private AdapterCallback mAdapterCallback;
+    private final int defaultColor;
+    private final int selectedColor;
+    int selectedPosition=0;
+
+
 
     public MoveListAdapter(Context context, List<Move> moveList) {
         inflater = LayoutInflater.from(context);
@@ -29,6 +31,8 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement AdapterCallback.");
         }
+        defaultColor = ContextCompat.getColor(context, R.color.white);
+        selectedColor = ContextCompat.getColor(context, R.color.marked);
     }
 
     public void setMoveList(List<Move> moveList) {
@@ -38,14 +42,14 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     class MoveViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public final TextView moveUCI;
-        public final TextView moveWinrate;
+        public final TextView moveWinRate;
         public final TextView moveNote;
         final MoveListAdapter adapter;
 
         public MoveViewHolder(@NonNull View itemView, MoveListAdapter adapter) {
             super(itemView);
             moveUCI = itemView.findViewById(R.id.UCImove);
-            moveWinrate = itemView.findViewById(R.id.winrate);
+            moveWinRate = itemView.findViewById(R.id.winrate);
             moveNote = itemView.findViewById(R.id.note);
             this.adapter = adapter;
             itemView.setOnClickListener(this);
@@ -55,7 +59,7 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
         public void onClick(View view) {
             int previousPosition = selectedPosition;
             selectedPosition = getAdapterPosition();
-            mAdapterCallback.onMethodCallback(moveList.get(selectedPosition).getUCImove());
+            mAdapterCallback.onMethodCallback(moveList.get(selectedPosition).getUCIMove());
             notifyItemChanged(previousPosition);
             notifyItemChanged(selectedPosition);
         }
@@ -72,15 +76,15 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     @Override
     public void onBindViewHolder(@NonNull MoveListAdapter.MoveViewHolder holder, int position) {
         Move current = moveList.get(position);
-        holder.moveUCI.setText(current.getUCImove());
-        holder.moveWinrate.setText(String.valueOf(current.getWinrate()));
+        holder.moveUCI.setText(current.getUCIMove());
+        holder.moveWinRate.setText(String.valueOf(current.getWinRate()));
         holder.moveNote.setText(current.getNote());
 
         if (selectedPosition==position){
-            holder.itemView.setBackgroundColor(Color.parseColor("#9DE0AD"));
+            holder.itemView.setBackgroundColor(selectedColor);
         }
         else{
-            holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));
+            holder.itemView.setBackgroundColor(defaultColor);
         }
 
     }

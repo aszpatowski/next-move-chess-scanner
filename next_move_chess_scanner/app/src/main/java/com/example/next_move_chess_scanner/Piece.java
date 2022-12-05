@@ -16,11 +16,7 @@ public class Piece implements Parcelable {
         field = in.readString();
         fieldPhoto = Bitmap.CREATOR.createFromParcel(in);
         recognized = in.readString();
-        if (in.readByte() == 0) {
-            confidence = null;
-        } else {
-            confidence = in.readFloat();
-        }
+        confidence = in.readFloat();
     }
 
     public static final Creator<Piece> CREATOR = new Creator<Piece>() {

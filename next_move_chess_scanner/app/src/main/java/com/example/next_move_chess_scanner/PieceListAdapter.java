@@ -71,7 +71,7 @@ public class PieceListAdapter extends RecyclerView.Adapter<PieceListAdapter.Piec
         holder.pieceField.setText(current.getField());
         holder.pieceFieldPhoto.setImageBitmap(current.getFieldPhoto());
         holder.pieceRecognized.setText(current.getRecognized());
-        holder.pieceConfidence.setText("99%");
+        holder.pieceConfidence.setText(current.getConfidence()*100+" %");
     }
 
     @Override
