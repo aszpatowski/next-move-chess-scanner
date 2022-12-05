@@ -10,12 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class PieceListAdapter extends RecyclerView.Adapter<PieceListAdapter.PieceViewHolder>  {
     private List<Piece> pieceList;
     private final LayoutInflater inflater;
     private PieceListAdapter.AdapterCallback mAdapterCallback;
+    private static final DecimalFormat df = new DecimalFormat("0.000");
 
     public PieceListAdapter(Context context, List<Piece> pieceList) {
         inflater = LayoutInflater.from(context);
@@ -71,7 +73,7 @@ public class PieceListAdapter extends RecyclerView.Adapter<PieceListAdapter.Piec
         holder.pieceField.setText(current.getField());
         holder.pieceFieldPhoto.setImageBitmap(current.getFieldPhoto());
         holder.pieceRecognized.setText(current.getRecognized());
-        holder.pieceConfidence.setText(current.getConfidence()*100+" %");
+        holder.pieceConfidence.setText(df.format((current.getConfidence()*100))+" %");
     }
 
     @Override
