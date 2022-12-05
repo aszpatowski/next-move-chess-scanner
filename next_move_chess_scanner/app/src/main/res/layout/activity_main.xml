@@ -54,7 +54,8 @@
             android:layout_height="match_parent"
             android:text="@string/scan"
             android:layout_marginHorizontal="3dp"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:autoSizeTextType="uniform"/>
 
         <Button
             android:id="@+id/getMoves"
@@ -63,7 +64,7 @@
             android:layout_height="match_parent"
             android:text="@string/getMoves"
             android:layout_marginHorizontal="3dp"
-            android:textSize="14sp"/>
+            android:autoSizeTextType="uniform"/>
 
         <Button
             android:id="@+id/reverse"
@@ -108,7 +109,7 @@
                 android:textColor="@color/black"
                 android:layout_weight="1"
                 android:text="@string/UCImoveInfo"
-                android:textSize="15dp"
+                android:autoSizeTextType="uniform"
                 android:textAlignment="center"/>
             <TextView
                 android:id="@+id/winrateInfo"
@@ -117,7 +118,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/black"
                 android:text="@string/winrateInfo"
-                android:textSize="15dp"
+                android:autoSizeTextType="uniform"
                 android:textAlignment="center"/>
             <TextView
                 android:id="@+id/noteInfo"
@@ -126,7 +127,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/black"
                 android:text="@string/noteInfo"
-                android:textSize="15dp"
+                android:autoSizeTextType="uniform"
                 android:textAlignment="center"/>
         </LinearLayout>
 
