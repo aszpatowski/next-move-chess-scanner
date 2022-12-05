@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
     private RecyclerView recyclerView;
     private MoveListAdapter moveListAdapter;
-    private List<Move> moveList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
-    private List<Piece> pieceList = new ArrayList<>();// = chessDbApi.sendRequest("r1bqkbnr/ppppp1pp/2n5/5p2/5P2/5N2/PPPPP1PP/RNBQKB1R w KQkq - 0 1");
+    private List<Move> moveList = new ArrayList<>();
+    private List<Piece> pieceList = new ArrayList<>();
     private Bitmap imageOfChessboard;
     private ChessDbApi chessDbApi = new ChessDbApi(this);
-    private PieceClassifier pieceClassifier = new PieceClassifier(this);
+    private PieceClassifier pieceClassifier;
     //private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
     private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
     ActivityResultLauncher <String> mGetContent;
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         textFenButton = findViewById(R.id.text_fen);
         getMovesButton = findViewById(R.id.getMoves);
         scanInfo = findViewById(R.id.scanInfo);
+        pieceClassifier = new PieceClassifier(this);
 
         //moveList.add(new Move(" ", " ",0,0," "," ", false));
         new RequestDbApiTask().execute(currentPosition);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                             new ChangeChessViewTask().execute();
                         }
                         else{
-                            Toast.makeText(MainActivity.this,"Empty", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.empty), Toast.LENGTH_SHORT).show();
                         }
                         dialog.cancel();
                         return;
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainActivity.this,"Canceled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,getResources().getString(R.string.canceled), Toast.LENGTH_SHORT).show();
                         dialog.cancel();
                         return;
                     }

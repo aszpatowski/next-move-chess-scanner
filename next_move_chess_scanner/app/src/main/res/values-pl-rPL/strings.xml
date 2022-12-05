@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Next Move: Chess Scanner</string>
+    <string name="scan">Skanowanie</string>
+    <string name="getMoves">Pobierz ruchy</string>
+    <string name="UCImoveInfo">Ruch</string>
+    <string name="scoreInfo">Punkty</string>
+    <string name="winrateInfo">Szansa wygranej</string>
+    <string name="noteInfo">Uwaga</string>
+    <string name="fen_position">Pozycja w FEN</string>
+    <string name="fieldInfo">Pole</string>
+    <string name="fieldPhotoInfo">Zdjęcie</string>
+    <string name="recognizedPieceInfo">Rozpoznana bierka</string>
+    <string name="confidenceInfo">Poziom pewności</string>
+    <string name="blackBishop">Czarny goniec</string>
+    <string name="whiteBishop">Biały goniec</string>
+    <string name="blank">Puste</string>
+    <string name="blackKing">Czarny król</string>
+    <string name="whiteKing">Biały król</string>
+    <string name="blackKnight">Czarny skoczek</string>
+    <string name="whiteKnight">Biały skoczek</string>
+    <string name="blackPawn">Czarny pion</string>
+    <string name="whitePawn">Biały pion</string>
+    <string name="blackQueen">Czarny hetman</string>
+    <string name="whiteQueen">Biały Hetman</string>
+    <string name="blackRook">Czarna wieża</string>
+    <string name="whiteRook">Biała wieża</string>
+    <string name="canceled">Anulowano</string>
+    <string name="empty">Puste</string>
+</resources>

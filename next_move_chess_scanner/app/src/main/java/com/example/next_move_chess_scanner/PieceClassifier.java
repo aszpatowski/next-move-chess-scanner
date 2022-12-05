@@ -27,25 +27,26 @@ public final class PieceClassifier {
     private static final int FLOAT_TYPE_SIZE = 4;
     private static final int PIXEL_SIZE = 1;
     private static final int modelInputSize = FLOAT_TYPE_SIZE * inputImageWidth * inputImageHeight * PIXEL_SIZE;
-    private static final String[] PIECES_NAMES = {
-            "Black bishop",
-            "White bishop",
-            "Blank",
-            "Black king",
-            "White king",
-            "Black knight",
-            "White knight",
-            "Black pawn",
-            "White pawn",
-            "Black queen",
-            "White queen",
-            "Black rook",
-            "White rook"
-        };
-    private static Context context;
+    private static String[] PIECES_NAMES;
+    private final Context context;
 
     PieceClassifier(Context ctx) {
         context = ctx;
+        PIECES_NAMES = new String[]{
+                context.getResources().getString(R.string.blackBishop),
+                context.getResources().getString(R.string.whiteBishop),
+                context.getResources().getString(R.string.blank),
+                context.getResources().getString(R.string.blackKing),
+                context.getResources().getString(R.string.whiteKing),
+                context.getResources().getString(R.string.blackKnight),
+                context.getResources().getString(R.string.whiteKnight),
+                context.getResources().getString(R.string.blackPawn),
+                context.getResources().getString(R.string.whitePawn),
+                context.getResources().getString(R.string.blackQueen),
+                context.getResources().getString(R.string.whiteQueen),
+                context.getResources().getString(R.string.blackRook),
+                context.getResources().getString(R.string.whiteRook)
+        };
     }
 
 

@@ -11,4 +11,19 @@
     <string name="fieldPhotoInfo">Photo</string>
     <string name="recognizedPieceInfo">Recognized piece</string>
     <string name="confidenceInfo">Confidence</string>
+    <string name="blackBishop">Black bishop</string>
+    <string name="whiteBishop">White bishop</string>
+    <string name="blank">Blank</string>
+    <string name="blackKing">Black king</string>
+    <string name="whiteKing">White king</string>
+    <string name="blackKnight">Black knight</string>
+    <string name="whiteKnight">White knight</string>
+    <string name="blackPawn">Black pawn</string>
+    <string name="whitePawn">White pawn</string>
+    <string name="blackQueen">Black queen</string>
+    <string name="whiteQueen">White queen</string>
+    <string name="blackRook">Black rook</string>
+    <string name="whiteRook">White rook</string>
+    <string name="canceled">Canceled</string>
+    <string name="empty">Empty</string>
 </resources>
