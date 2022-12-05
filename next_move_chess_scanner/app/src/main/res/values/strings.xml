@@ -26,4 +26,7 @@
     <string name="whiteRook">White rook</string>
     <string name="canceled">Canceled</string>
     <string name="empty">Empty</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="enterFenNotation">Enter position in FEN notation</string>
 </resources>

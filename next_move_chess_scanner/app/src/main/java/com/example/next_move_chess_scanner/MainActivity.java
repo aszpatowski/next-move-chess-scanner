@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         AlertDialog.Builder FENDialogBuilder = new AlertDialog.Builder(this)
                 .setView(input)
                 .setCancelable(false)
-                .setTitle("Enter position in FEN notation")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setTitle(getResources().getString(R.string.enterFenNotation))
+                .setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (input.getText().toString().length()>0){
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                         return;
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(MainActivity.this,getResources().getString(R.string.canceled), Toast.LENGTH_SHORT).show();

@@ -27,4 +27,7 @@
     <string name="whiteRook">Biała wieża</string>
     <string name="canceled">Anulowano</string>
     <string name="empty">Puste</string>
+    <string name="confirm">Zatwierdź</string>
+    <string name="cancel">Anuluj</string>
+    <string name="enterFenNotation">Wprowadź pozycje w notacji FEN</string>
 </resources>
