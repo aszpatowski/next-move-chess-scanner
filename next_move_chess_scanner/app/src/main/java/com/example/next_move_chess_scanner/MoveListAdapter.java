@@ -16,16 +16,18 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
 
     private List<Move> moveList;
     private final LayoutInflater inflater;
-    private AdapterCallback mAdapterCallback;
+    private final AdapterCallback mAdapterCallback;
     private final int defaultColor;
     private final int selectedColor;
     int selectedPosition=0;
+    private boolean sanNotation = false;
 
 
 
-    public MoveListAdapter(Context context, List<Move> moveList) {
+    public MoveListAdapter(Context context, List<Move> moveList, boolean sanNotation) {
         inflater = LayoutInflater.from(context);
         this.moveList = moveList;
+        this.sanNotation = sanNotation;
         try {
             this.mAdapterCallback = ((AdapterCallback) context);
         } catch (ClassCastException e) {
@@ -41,14 +43,14 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
 
     class MoveViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        public final TextView moveUCI;
+        public final TextView move;
         public final TextView moveWinRate;
         public final TextView moveNote;
         final MoveListAdapter adapter;
 
         public MoveViewHolder(@NonNull View itemView, MoveListAdapter adapter) {
             super(itemView);
-            moveUCI = itemView.findViewById(R.id.UCImove);
+            move = itemView.findViewById(R.id.move);
             moveWinRate = itemView.findViewById(R.id.winrate);
             moveNote = itemView.findViewById(R.id.note);
             this.adapter = adapter;
@@ -76,7 +78,12 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     @Override
     public void onBindViewHolder(@NonNull MoveListAdapter.MoveViewHolder holder, int position) {
         Move current = moveList.get(position);
-        holder.moveUCI.setText(current.getUCIMove());
+        if(sanNotation) {
+            holder.move.setText(current.getSANMove());
+        }
+        else {
+            holder.move.setText(current.getUCIMove());
+        }
         holder.moveWinRate.setText(String.valueOf(current.getWinRate()));
         holder.moveNote.setText(current.getNote());
 

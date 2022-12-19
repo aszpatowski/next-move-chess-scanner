@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Next Move: Chess Scanner</string>
     <string name="scan">Skanowanie</string>
-    <string name="getMoves">Pobierz ruchy</string>
+    <string name="getMoves">Załaduj ruchy</string>
     <string name="UCImoveInfo">Ruch</string>
     <string name="scoreInfo">Punkty</string>
     <string name="winrateInfo">Szansa wygranej</string>
@@ -30,4 +30,29 @@
     <string name="confirm">Zatwierdź</string>
     <string name="cancel">Anuluj</string>
     <string name="enterFenNotation">Wprowadź pozycje w notacji FEN</string>
+    <string name="button_help">Pomoc</string>
+    <string name="button_settings">Ustawienia</string>
+    <string name="camera">Aparat</string>
+    <string name="gallery">Galeria</string>
+    <string name="choosePhotoSource">Wybierz źródło zdjęcia</string>
+    <string name="SANNotationInfoText">Wybierz notacji do opisu ruchów</string>
+    <string name="languageText">Wybierz język aplikacji</string>
+    <string name="askWhatColorText">Zawsze pytaj jakim kolorem gram</string>
+    <string name="defaultColorText">Domyślny kolor</string>
+    <string name="automaticDetectChessboard">Automatyczne wykrywanie szachownicy</string>
+    <string name="limitMoves">Limit wyświetlanych ruchów</string>
+    <string name="saveOptions">Zapisz</string>
+    <string name="cancelOptions">Anuluj</string>
+    <string name="on">Włącz</string>
+    <string name="off">Wyłącz</string>
+    <string name="white">Biały</string>
+    <string name="black">Czarny</string>
+    <string name="optionsUpdatedInfo">(Niektóre opcje wymagają ponownego uruchomienia aplikacji w celu aktualizacji)</string>
+    <string name="help">Pomoc</string>
+    <string name="helpMessage">Next move: Chess scanner\n\n
+        1. Kliknij \'Skanowanie\'.\n
+        2. Zrób zdjęcie aparatem lub wybierz zdjęcie z galerii.\n
+        3. Przytnij zdjęcie i wycentruj szachownice.\n
+        4. Kliknij \'Załaduj ruchy\' aby wczytać możliwe sugerowane ruchy.\n</string>
+    <string name="ok">Rozumiem</string>
 </resources>

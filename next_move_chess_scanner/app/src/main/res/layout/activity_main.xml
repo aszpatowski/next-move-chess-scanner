@@ -9,21 +9,60 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-    <!--
-    <ImageView
-        android:id="@+id/imageView"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/menu_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="4"
-        app:srcCompat="@drawable/chessboard"
-        tools:ignore="ImageContrastCheck" /> -->
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/azure_green_blue"
+        android:orientation="horizontal"
+    >
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="6"
+            android:gravity="center"/>
+
+
+
+            <Button
+                android:id="@+id/help"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="3dp"
+                app:icon="@drawable/ic_baseline_help_outline_24"
+                android:contentDescription="@string/button_help"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"/>
+
+            <Button
+                android:id="@+id/settings"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="3dp"
+                app:icon="@drawable/ic_baseline_settings_24"
+                android:contentDescription="@string/button_settings"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                />
+
+    </androidx.appcompat.widget.Toolbar>
+
 
     <com.example.next_move_chess_scanner.ChessView
         android:id="@+id/chess_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="4"
-        android:gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:gravity="top"
         tools:ignore="MissingClass"
         />
 
@@ -31,22 +70,23 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="7"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
         android:orientation="horizontal">
-
 
 
         <Button
             android:id="@+id/text_fen"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp"
             android:layout_marginVertical="0dp"
+            android:layout_weight="1"
             app:icon="@drawable/ic_baseline_text_fen_24"
             app:iconGravity="textStart"
-            app:iconPadding="0dp" />
+            app:iconPadding="0dp"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
         <Button
             android:id="@+id/scan"
             android:layout_width="0dp"
@@ -93,8 +133,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="4"
+        android:layout_height="0dp"
+        android:layout_weight="5"
         android:orientation="vertical">
 
         <LinearLayout
@@ -135,7 +175,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:layout_weight="5"
+            android:layout_weight="4"
             >
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"

@@ -24,9 +24,11 @@ public class ChessDbApi{
     private static final String returnJson = "&json=1";
     private static Context context;
     private static final String Tag = "CHESSDBAPI";
+    private int maxResults;
 
-    ChessDbApi(Context ctx) {
+    ChessDbApi(Context ctx, int maxResults) {
         context = ctx;
+        this.maxResults = maxResults;
     }
 
     public List<Move> sendRequest(String fenNotation) {
@@ -50,6 +52,10 @@ public class ChessDbApi{
                                         move.getString("winrate"),
                                         false));
                                 Log.d(Tag, "move is: " + move.getString("uci"));
+                                if(i+1>=maxResults)
+                                {
+                                    break;
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
