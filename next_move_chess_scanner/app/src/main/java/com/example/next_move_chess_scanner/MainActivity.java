@@ -35,15 +35,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.next_move_chess_scanner.ml.BlackModel;
-
 import org.opencv.android.OpenCVLoader;
-import org.tensorflow.lite.DataType;
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     public Button scanButton;
     public Button textFenButton;
     public Button getMovesButton;
-    public Button scanInfo;
+    public Button scanInfoButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,30 +88,54 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         boolean defaultColor = sharedPreferences.getBoolean("color", false);
 
         int maxResults = sharedPreferences.getInt("maxResults",50);
-
+        // define ChessDbApi object and amount of results that will be returned to
         chessDbApi = new ChessDbApi(this, maxResults);
+
+        // define buttons in toolbar
         helpButton = findViewById(R.id.help);
         settingsButton = findViewById(R.id.settings);
 
+        // define views
+        chessView = findViewById(R.id.chess_view);
+        recyclerView = findViewById(R.id.recyclerView);
+
+        // define other layout buttons
         reverseButton = findViewById(R.id.reverse);
         scanButton = findViewById(R.id.scan);
         textFenButton = findViewById(R.id.text_fen);
         getMovesButton = findViewById(R.id.getMoves);
-        scanInfo = findViewById(R.id.scanInfo);
+
+
+
+
+        scanInfoButton = findViewById(R.id.scanInfo);
         pieceClassifier = new PieceClassifier(this);
 
-        //moveList.add(new Move(" ", " ",0,0," "," ", false));
         new RequestDbApiTask().execute(currentPosition);
-        recyclerView = findViewById(R.id.recyclerView);
 
         moveListAdapter = new MoveListAdapter(this, moveList, sanNotation);
         recyclerView.setAdapter(moveListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Log.d("XD", "OpenCv Loading status " + moveList.indexOf(0));
 
-        chessView = findViewById(R.id.chess_view);
         chessView.setFen(currentPosition);
         new ChangeChessViewTask().execute();
+
+        // Set dialogs what appear when click: textFenButton, scanButton, helpButton
+
+        AlertDialog.Builder helpDialogBuilder = new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle(getResources().getString(R.string.help))
+                .setMessage(getResources().getString(R.string.helpMessage))
+                .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                        return;
+                    }
+                });
+        AlertDialog helpDialog = helpDialogBuilder.create();
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -152,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         AlertDialog FENdialog = FENDialogBuilder.create();
 
         TextView title = new TextView(this);
-        // You Can Customise your Title here
         title.setText(getResources().getString(R.string.choosePhotoSource));
         title.setPadding(10, 10, 10, 10);
         title.setGravity(Gravity.CENTER);
@@ -161,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         AlertDialog.Builder photoDialogBuilder = new AlertDialog.Builder(this)
                 .setCancelable(true)
-                //.setTitle(getResources().getString(R.string.choosePhotoSource))
                 .setCustomTitle(title)
                 .setPositiveButton(getResources().getString(R.string.camera), new DialogInterface.OnClickListener() {
                     @Override
@@ -181,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                         startActivityForResult(cameraIntent, CAMERA_REQUEST);
 
 
-                        //mGetContent.launch("image/*");
                         dialog.cancel();
                         return;
                     }
@@ -203,24 +218,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 });
         AlertDialog photoDialog = photoDialogBuilder.create();
 
-
-        AlertDialog.Builder helpDialogBuilder = new AlertDialog.Builder(this)
-                .setCancelable(true)
-                .setTitle(getResources().getString(R.string.help))
-                .setMessage(getResources().getString(R.string.helpMessage))
-                .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.cancel();
-                        return;
-                    }
-                });
-        AlertDialog helpDialog = helpDialogBuilder.create();
-
-
-
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
 
 
         // Set up the buttons
@@ -249,7 +246,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               // mGetContent.launch("image/*");
                photoDialog.show();
             }
         });
@@ -270,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             }
         });
 
-        scanInfo.setOnClickListener(new View.OnClickListener() {
+        scanInfoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("PIECES_LIST", (ArrayList<? extends Parcelable>) pieceList);
@@ -313,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 Bitmap imageOfChessboard = image.copy(image.getConfig(), true);
                 imageOfChessboard = changeResolution(imageOfChessboard);
                 pieceList = createPieceList(imageOfChessboard, true);
-                scanInfo.setEnabled(true);
+                scanInfoButton.setEnabled(true);
 
             } catch (IOException e) {
                 e.printStackTrace();
