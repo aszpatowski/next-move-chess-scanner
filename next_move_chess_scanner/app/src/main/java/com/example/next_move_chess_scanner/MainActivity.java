@@ -65,6 +65,18 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     public Button textFenButton;
     public Button getMovesButton;
     public Button scanInfoButton;
+
+    // Variables used to user configuration and changing in OptionsActivity
+    // Described in OnCreate() Method
+    public boolean sanNotation;
+
+    public String language;
+
+    public boolean askColor;
+
+    public boolean defaultColor;
+
+    public int maxResults;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,18 +88,19 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE);
 
         // false - UCI Notation, true - SAN Notation
-        boolean sanNotation = sharedPreferences.getBoolean("sanNotation", true);
+        sanNotation = sharedPreferences.getBoolean("sanNotation", true);
 
         // false - english, true - polish
-        String language = sharedPreferences.getString("language", getResources().getConfiguration().locale.getLanguage());
+        language = sharedPreferences.getString("language", getResources().getConfiguration().locale.getLanguage());
 
         // false - Don't ask everytime about color use defaultColor , true - ask everytime about color
-        boolean askColor = sharedPreferences.getBoolean("askColor", true);
+        askColor = sharedPreferences.getBoolean("askColor", true);
 
-        // if above option is false, set default color, false - white, true - black
-        boolean defaultColor = sharedPreferences.getBoolean("color", false);
+        // if below option is false, set default color, false - white, true - black
+        defaultColor = sharedPreferences.getBoolean("color", false);
 
-        int maxResults = sharedPreferences.getInt("maxResults",50);
+
+        maxResults = sharedPreferences.getInt("maxResults",50);
         // define ChessDbApi object and amount of results that will be returned to
         chessDbApi = new ChessDbApi(this, maxResults);
 
@@ -231,6 +244,11 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         settingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
+                bundle.putBoolean("sanNotation", sanNotation);
+                bundle.putString("language", language);
+                bundle.putBoolean("askColor", askColor);
+                bundle.putBoolean("defaultColor", defaultColor);
+                bundle.putInt("maxResults", maxResults);
                 Intent intent = new Intent(MainActivity.this, OptionsActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);;
