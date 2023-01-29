@@ -21,8 +21,6 @@ if __name__ == "__main__":
     path_test = path + "/test/"
     train_names = get_names(path_train)
     test_names = get_names(path_test)
-    print(sys.getsizeof(train_names), "bytes")
-    print(sys.getsizeof(test_names), "bytes")
 
     if len(sys.argv) < 5:
         print("Give arguments")
