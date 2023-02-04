@@ -7,6 +7,10 @@ import android.util.Pair;
 
 import com.example.next_move_chess_scanner.ml.BlackModel;
 import com.example.next_move_chess_scanner.ml.WhiteModel;
+import com.example.next_move_chess_scanner.ml.WhitePiecesModelAll;
+import com.example.next_move_chess_scanner.ml.BlackPiecesModelAll;
+import com.example.next_move_chess_scanner.ml.WhiteBlankOrOccupiedModelAll;
+import com.example.next_move_chess_scanner.ml.BlackBlankOrOccupiedModelAll;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.image.ImageProcessor;
@@ -35,7 +39,6 @@ public final class PieceClassifier {
         PIECES_NAMES = new String[]{
                 context.getResources().getString(R.string.blackBishop),
                 context.getResources().getString(R.string.whiteBishop),
-                context.getResources().getString(R.string.blank),
                 context.getResources().getString(R.string.blackKing),
                 context.getResources().getString(R.string.whiteKing),
                 context.getResources().getString(R.string.blackKnight),
@@ -45,7 +48,8 @@ public final class PieceClassifier {
                 context.getResources().getString(R.string.blackQueen),
                 context.getResources().getString(R.string.whiteQueen),
                 context.getResources().getString(R.string.blackRook),
-                context.getResources().getString(R.string.whiteRook)
+                context.getResources().getString(R.string.whiteRook),
+                context.getResources().getString(R.string.blank)
         };
     }
 
