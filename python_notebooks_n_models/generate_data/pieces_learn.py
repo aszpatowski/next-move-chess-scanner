@@ -9,7 +9,7 @@ from keras.preprocessing.image import ImageDataGenerator
 image_size = (32, 32)
 batch_size = 16
 
-current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+current_time = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 
 PATH_TO_DATA = 'pieces_data'
 MODEL_NAME = f'pieces_model_{current_time}'
@@ -67,7 +67,7 @@ white_model = keras.Sequential(
         layers.Conv2D(128, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Flatten(),
-        layers.Dropout(0.2),
+        # layers.Dropout(0.2),
         layers.Dense(512, activation="relu"),
         layers.Dense(12, activation="softmax"), # 12 classes, every possible piece
     ]
