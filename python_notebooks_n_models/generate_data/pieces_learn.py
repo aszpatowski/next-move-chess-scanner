@@ -16,12 +16,12 @@ MODEL_NAME_TIME = f'pieces_model_{current_time}'
 MODEL_NAME = f'pieces_model'
 
 datagen_white_fields = ImageDataGenerator(
-        rotation_range=5,
+        rotation_range=2,
         horizontal_flip=False,
         fill_mode='nearest')
 print(datagen_white_fields)
 datagen_black_fields = ImageDataGenerator(
-        rotation_range=5,
+        rotation_range=2,
         horizontal_flip=False,
         fill_mode='nearest')
 print(datagen_black_fields)
@@ -62,23 +62,12 @@ white_model = keras.Sequential(
     [
         keras.Input(shape=(32,32,1)), # 32x32 grayscale
         layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
-        layers.BatchNormalization(),
         layers.MaxPooling2D(pool_size=(2, 2)),
-        layers.Dropout(0.2),
         layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
-        layers.BatchNormalization(),
         layers.MaxPooling2D(pool_size=(2, 2)),
-        layers.Dropout(0.2),
-        layers.Conv2D(128, kernel_size=(3, 3), activation="relu"),
-        layers.BatchNormalization(),
-        layers.MaxPooling2D(pool_size=(2, 2)),
-        layers.Dropout(0.4),
-        layers.Conv2D(512, kernel_size=(3, 3), padding='same', activation='relu'),
-        layers.BatchNormalization(),
-        layers.MaxPooling2D(pool_size=(2, 2), strides=2),
         layers.Flatten(),
-        layers.Dense(512, activation="relu"),
-        layers.Dense(12, activation="softmax"), # 12 classes, every possible piece
+        layers.Dense(256, activation="relu"),
+        layers.Dense(12, activation="softmax"), # 12 classes
     ]
 )
 
@@ -87,7 +76,7 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-epochs = 1
+epochs = 6
 
 history = white_model.fit(
     train_white_fields,
@@ -99,7 +88,7 @@ white_model.save_weights(f'archive/white_{MODEL_NAME_TIME}_all.h5')
 
 
 black_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-epochs = 1
+epochs = 6
 
 history = black_model.fit(
     train_black_fields,
