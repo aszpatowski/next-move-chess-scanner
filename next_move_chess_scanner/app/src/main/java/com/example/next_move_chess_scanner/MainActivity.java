@@ -251,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         playerColor = false;
+                        chessView.setSide(playerColor);
                         setChessboard();
                         dialog.cancel();
                         return;
@@ -260,6 +261,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         playerColor = true;
+                        chessView.setSide(playerColor);
                         setChessboard();
                         dialog.cancel();
                         return;
@@ -269,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         playerColor = defaultColor;
+                        chessView.setSide(playerColor);
                         setChessboard();
                         dialog.cancel();
                         Toast.makeText(MainActivity.this, getResources().getString(R.string.setDefaultColor), Toast.LENGTH_SHORT).show();
@@ -444,11 +447,12 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         // Divide the chessboard into individual images
         List<Bitmap> imageList = divideChessboard(chessboard);
         // Create strings for the letters and numbers of the board
-        String alphabet = "ABCDEFGH";
-        String numbers = "87654321";
+        String alphabet = "HGFEDCBA";
+        String numbers = "12345678";
         // If it is not white, switch the order of the numbers string
         if(!isWhite) {
-            numbers = "12345678";
+            numbers = "87654321";
+            alphabet = "ABCDEFGH";
         }
         // Create a string to store the field name and an empty list to store pieces in 
         String field; 
@@ -461,13 +465,13 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         boolean isWhiteField = false;
     
         // Loop through each character in the numbers string 
-        for(char number: numbers.toCharArray()){
+        for(char letter: alphabet.toCharArray()){
     
             // Switch between white and black fields for each row 
             isWhiteField = !isWhiteField;
     
             // Loop through each character in the alphabet string  
-            for(char letter: alphabet.toCharArray()){
+            for(char number: numbers.toCharArray()){
     
                 // Combine letter and number characters to create a field name  
                 field = letter + Character.toString(number);
@@ -504,9 +508,9 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         for (int i = 7; i >= 0; i--) {
             int emptySquares = 0;
             // Iterate through the columns of the board from left to right
-            for (int j = 0; j < 8; j++) {
+            for (int j = 7; j >= 0; j--) {
                 // Get the name of the piece at the given position
-                String piece = pieces.get(i * 8 + j);
+                String piece = pieces.get(j * 8 + i);
                 if (piece.equals("")) {
                     // If there is no piece at the given position, increase the number of empty squares
                     emptySquares++;

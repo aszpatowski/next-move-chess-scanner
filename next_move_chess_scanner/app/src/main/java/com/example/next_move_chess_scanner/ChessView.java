@@ -30,7 +30,7 @@ class ChessView extends View {
     String currentFen;
     String pointer = "";
     boolean isPointer = false;
-    boolean white = true;
+    boolean isBlack = false;
 
     private float scaleFactor = 1.0f;
     private float originX = 20f;
@@ -121,7 +121,7 @@ class ChessView extends View {
 
     protected void highlightSquareAt(Canvas canvas, int col, int row, int color) {
         paint.setColor(color);
-        if(white)
+        if(isBlack)
             canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
         else
             canvas.drawRect(originX + col * cellSide, originY + (7-row) * cellSide, originX + (col + 1) * cellSide, originY + (7-row + 1) * cellSide, paint);
@@ -155,10 +155,13 @@ class ChessView extends View {
         isPointer = true;
     }
     public void changeSides(){
-        if (white==true)
-            white= false;
+        if (isBlack ==true)
+            isBlack = false;
         else
-            white= true;
+            isBlack = true;
+    }
+    public void setSide(boolean color){
+        isBlack = color;
     }
     public void refreshChessView(){
         invalidate();
@@ -184,10 +187,10 @@ class ChessView extends View {
                 continue;
             }
             else {
-                if(white)
-                    drawPieceAt(canvas, row, column, fenToNames.get(currentFen.charAt(i)));
+                if(isBlack)
+                    drawPieceAt(canvas, 7-row, 7-column, fenToNames.get(currentFen.charAt(i)));
                 else
-                    drawPieceAt(canvas, 7-row, column, fenToNames.get(currentFen.charAt(i)));
+                    drawPieceAt(canvas, row, column, fenToNames.get(currentFen.charAt(i)));
             }
             i += 1;
             column += addColumns;

@@ -22,7 +22,7 @@
                 android:id="@+id/fieldPhotoInfo"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:textSize="15dp"
                 android:text="@string/fieldPhotoInfo"
                 android:textAlignment="center"/>
@@ -30,7 +30,7 @@
                 android:id="@+id/recognizedPieceInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="6"
                 android:textSize="15dp"
                 android:text="@string/recognizedPieceInfo"
                 android:textAlignment="center"/>
@@ -38,7 +38,7 @@
                 android:id="@+id/confidenceInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:textSize="15dp"
                 android:text="@string/confidenceInfo"
                 android:textAlignment="center"/>

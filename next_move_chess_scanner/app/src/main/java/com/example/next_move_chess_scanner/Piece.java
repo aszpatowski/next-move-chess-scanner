@@ -16,7 +16,7 @@ public class Piece implements Parcelable {
 
 
     public Piece(Context context){
-        mContext = context;
+            mContext = context;
             // Put the mappings for white pieces into the map
     
             FEN_TO_NAMES.put("K", mContext.getString(R.string.whiteKing));
