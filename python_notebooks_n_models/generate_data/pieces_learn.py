@@ -5,9 +5,10 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from keras.preprocessing.image import ImageDataGenerator
+import random
 
 image_size = (32, 32)
-batch_size = 16
+batch_size = 64
 
 current_time = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 
@@ -15,22 +16,34 @@ PATH_TO_DATA = 'pieces_data'
 MODEL_NAME_TIME = f'pieces_model_{current_time}'
 MODEL_NAME = f'pieces_model'
 
+
+def add_noise(img):
+    '''Add random noise to an image'''
+    VARIABILITY = 50
+    deviation = VARIABILITY*random.random()
+    noise = np.random.normal(0, deviation, img.shape)
+    img += noise
+    np.clip(img, 0., 255.)
+    return img
+
 datagen_white_fields = ImageDataGenerator(
-        rotation_range=2,
+        rotation_range=5,
         horizontal_flip=False,
-        fill_mode='nearest')
+        fill_mode='nearest',
+preprocessing_function=add_noise)
 print(datagen_white_fields)
 datagen_black_fields = ImageDataGenerator(
-        rotation_range=2,
+        rotation_range=5,
         horizontal_flip=False,
-        fill_mode='nearest')
+        fill_mode='nearest',
+preprocessing_function=add_noise,)
 print(datagen_black_fields)
 train_white_fields = datagen_white_fields.flow_from_directory(
     f'{PATH_TO_DATA}/train/white_fields',
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'grayscale',
-    seed = 1,
+    seed = 2,
     shuffle=True
 )
 test_white_fields = datagen_white_fields.flow_from_directory(
@@ -38,7 +51,7 @@ test_white_fields = datagen_white_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'grayscale',
-    seed = 2,
+    seed = 3,
     shuffle=True
 )
 train_black_fields = datagen_black_fields.flow_from_directory(
@@ -46,7 +59,7 @@ train_black_fields = datagen_black_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'grayscale',
-    seed = 1,
+    seed = 2,
     shuffle=True
 )
 test_black_fields = datagen_black_fields.flow_from_directory(
@@ -54,7 +67,7 @@ test_black_fields = datagen_black_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'grayscale',
-    seed = 2,
+    seed = 3,
     shuffle=True
 )
 
@@ -63,10 +76,16 @@ white_model = keras.Sequential(
         keras.Input(shape=(32,32,1)), # 32x32 grayscale
         layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
+        layers.Dropout(0.25),
         layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
+        layers.Dropout(0.25),
+        layers.Conv2D(512, kernel_size=(3, 3), activation="relu"),
+        layers.MaxPooling2D(pool_size=(2, 2)),
+        layers.Dropout(0.4),
         layers.Flatten(),
-        layers.Dense(256, activation="relu"),
+        layers.Dense(1024, activation="relu"),
+        layers.Dropout(0.3),
         layers.Dense(12, activation="softmax"), # 12 classes
     ]
 )
@@ -75,8 +94,8 @@ white_model.summary()
 
 black_model = keras.models.clone_model(white_model)
 
-white_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-epochs = 6
+white_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+epochs = 10
 
 history = white_model.fit(
     train_white_fields,
@@ -87,8 +106,8 @@ history = white_model.fit(
 white_model.save_weights(f'archive/white_{MODEL_NAME_TIME}_all.h5')
 
 
-black_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-epochs = 6
+black_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+epochs = 10
 
 history = black_model.fit(
     train_black_fields,
@@ -98,7 +117,7 @@ history = black_model.fit(
 black_model.save_weights(f'archive/black_{MODEL_NAME_TIME}_all.h5')
 
 converter_white_model = tf.lite.TFLiteConverter.from_keras_model(white_model)
-converter_white_model.optimizations = [tf.lite.Optimize.DEFAULT]
+#converter_white_model.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_quantized_model = converter_white_model.convert()
 
 f = open(f'archive/white_{MODEL_NAME_TIME}_all.tflite', "wb")
@@ -110,7 +129,7 @@ f.write(tflite_quantized_model)
 f.close()
 
 converter_black_model = tf.lite.TFLiteConverter.from_keras_model(black_model)
-converter_black_model.optimizations = [tf.lite.Optimize.DEFAULT]
+#converter_black_model.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_quantized_model = converter_black_model.convert()
 
 f = open(f'archive/black_{MODEL_NAME_TIME}_all.tflite', "wb")

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.lang.Float;
 
@@ -65,7 +66,7 @@ public final class PieceClassifier {
         if(isWhite)
         {
             arrayWithProbabilities = recognizeIsOccupiedWhiteField(convertedBitmap);
-            int index = getMax(arrayWithProbabilities);
+            int index = getMax2(arrayWithProbabilities);
             if(index == 0){
                 return new Pair<>(PIECES_NAMES[12], arrayWithProbabilities[index]);
             }
@@ -74,7 +75,7 @@ public final class PieceClassifier {
         }
         else{
             arrayWithProbabilities = recognizeIsOccupiedBlackField(convertedBitmap);
-            int index = getMax(arrayWithProbabilities);
+            int index = getMax2(arrayWithProbabilities);
             if(index == 0){
                 return new Pair<>(PIECES_NAMES[12], arrayWithProbabilities[index]);
             }
@@ -196,7 +197,23 @@ public final class PieceClassifier {
         int max = 0;
 
         for (int i=0; i<arr.length; i++){
-            Log.d("pieceClassifer", "Chance of " + PIECES_NAMES[i]+" is "+ arr[i]);
+            Log.d("pieceClassiferPiece", "Chance of " + PIECES_NAMES[i]+" is "+ arr[i]);
+            if(arr[i] > arr[max])
+            {
+                max=i;
+            }
+        }
+        return max;
+    }
+    int getMax2(float[] arr){
+        String[] occupied = new String[]{
+                "Blank",
+                "Occupied"
+        };
+        int max = 0;
+
+        for (int i=0; i<arr.length; i++){
+            Log.d("pieceClassiferOccupied", "Chance of " + occupied[i]+" is "+ arr[i]);
             if(arr[i] > arr[max])
             {
                 max=i;
