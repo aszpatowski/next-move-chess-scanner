@@ -76,24 +76,12 @@ public class MoveListAdapter extends RecyclerView.Adapter<MoveListAdapter.MoveVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MoveListAdapter.MoveViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MoveViewHolder holder, int position) {
         Move current = moveList.get(position);
-        if(sanNotation) {
-            holder.move.setText(current.getSANMove());
-        }
-        else {
-            holder.move.setText(current.getUCIMove());
-        }
+        holder.move.setText(sanNotation ? current.getSANMove() : current.getUCIMove());
         holder.moveWinRate.setText(String.valueOf(current.getWinRate()));
         holder.moveNote.setText(current.getNote());
-
-        if (selectedPosition==position){
-            holder.itemView.setBackgroundColor(selectedColor);
-        }
-        else{
-            holder.itemView.setBackgroundColor(defaultColor);
-        }
-
+        holder.itemView.setBackgroundColor(selectedPosition == position ? selectedColor : defaultColor);
     }
 
     @Override

@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
+    //id 'kotlin-android'
 }
-
 android {
     compileSdk 31
     defaultConfig {
@@ -51,5 +51,9 @@ dependencies {
 
     implementation 'com.github.krokyze:ucropnedit:2.2.6-2'
     //implementation 'org.tensorflow:tensorflow-lite:2.8.0'
+    implementation 'org.jetbrains.dokka:android-documentation-plugin:1.7.20'
+    //implementation 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21'
+    implementation "org.jetbrains.dokka:kotlin-as-java-plugin:1.7.20"
 
 }
+//apply from: 'https://raw.github.com/Vorlonsoft/EasyDokkaPlugin/master/dokka.gradle'

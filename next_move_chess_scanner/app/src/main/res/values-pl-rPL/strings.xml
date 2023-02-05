@@ -55,4 +55,6 @@
         3. Przytnij zdjęcie i wycentruj szachownice.\n
         4. Kliknij \'Załaduj ruchy\' aby wczytać możliwe sugerowane ruchy.\n</string>
     <string name="ok">Rozumiem</string>
+    <string name="whatColor">Jakim kolorem grasz?</string>
+    <string name="setDefaultColor">Został ustawiony domyślny kolor</string>
 </resources>

@@ -54,4 +54,6 @@
         3. Crop and center chessboard.\n
         4. Click \'Get Moves\' to load moves.\n</string>
     <string name="ok">Ok</string>
+    <string name="whatColor">What color do you play?</string>
+    <string name="setDefaultColor">The default color has been set</string>
 </resources>

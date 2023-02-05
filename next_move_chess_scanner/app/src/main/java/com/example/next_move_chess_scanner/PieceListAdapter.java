@@ -72,7 +72,7 @@ public class PieceListAdapter extends RecyclerView.Adapter<PieceListAdapter.Piec
 
         holder.pieceField.setText(current.getField());
         holder.pieceFieldPhoto.setImageBitmap(current.getFieldPhoto());
-        holder.pieceRecognized.setText(current.getRecognized());
+        holder.pieceRecognized.setText(current.getRecognizedName());
         holder.pieceConfidence.setText(df.format((current.getConfidence()*100))+" %");
     }
 

@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements MoveListAdapter.AdapterCallback {
 
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     ActivityResultLauncher <String> mGetContent;
     ChessView chessView;
     SharedPreferences sharedPreferences;
+    Bitmap imageOfChessboard;
+    public boolean playerColor;
+    
     public Button helpButton;
     public Button settingsButton;
     public Button reverseButton;
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         Log.d("OpenCV", "OpenCv Loading status " + OpenCVLoader.initDebug());
         Toolbar toolbar = findViewById(R.id.menu_toolbar);
         setSupportActionBar(toolbar);
+        Piece tempPiece = new Piece(this);
 
         sharedPreferences = getSharedPreferences("prefs", MODE_PRIVATE);
 
@@ -182,16 +187,16 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 });
         AlertDialog FENdialog = FENDialogBuilder.create();
 
-        TextView title = new TextView(this);
-        title.setText(getResources().getString(R.string.choosePhotoSource));
-        title.setPadding(10, 10, 10, 10);
-        title.setGravity(Gravity.CENTER);
-        title.setTextColor(Color.BLACK);
-        title.setTextSize(20);
+        TextView photoDialogTitle = new TextView(this);
+        photoDialogTitle.setText(getResources().getString(R.string.choosePhotoSource));
+        photoDialogTitle.setPadding(10, 10, 10, 10);
+        photoDialogTitle.setGravity(Gravity.CENTER);
+        photoDialogTitle.setTextColor(Color.BLACK);
+        photoDialogTitle.setTextSize(20);
 
         AlertDialog.Builder photoDialogBuilder = new AlertDialog.Builder(this)
                 .setCancelable(true)
-                .setCustomTitle(title)
+                .setCustomTitle(photoDialogTitle)
                 .setPositiveButton(getResources().getString(R.string.camera), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -226,10 +231,51 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.canceled), Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });
         AlertDialog photoDialog = photoDialogBuilder.create();
+
+        TextView whatColorDialogTitle = new TextView(this);
+        whatColorDialogTitle.setText(getResources().getString(R.string.whatColor));
+        whatColorDialogTitle.setPadding(10, 10, 10, 10);
+        whatColorDialogTitle.setGravity(Gravity.CENTER);
+        whatColorDialogTitle.setTextColor(Color.BLACK);
+        whatColorDialogTitle.setTextSize(20);
+
+        AlertDialog.Builder whatColorDialogBuilder = new AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setCustomTitle(whatColorDialogTitle)
+                .setPositiveButton(getResources().getString(R.string.white), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        playerColor = false;
+                        setChessboard();
+                        dialog.cancel();
+                        return;
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.black), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        playerColor = true;
+                        setChessboard();
+                        dialog.cancel();
+                        return;
+                    }
+                })
+                .setNeutralButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        playerColor = defaultColor;
+                        setChessboard();
+                        dialog.cancel();
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.setDefaultColor), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                });
+        AlertDialog whatColorDialog = whatColorDialogBuilder.create();
 
 
 
@@ -238,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         helpButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 helpDialog.show();
+                
             }
         });
 
@@ -264,7 +311,13 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               photoDialog.show();
+                if(askColor){
+                    whatColorDialog.show();
+                }
+                else {
+                    playerColor = defaultColor;
+                }
+                photoDialog.show();
             }
         });
         reverseButton.setOnClickListener(new View.OnClickListener() {
@@ -324,10 +377,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             }
             try {
                 Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-                Bitmap imageOfChessboard = image.copy(image.getConfig(), true);
-                imageOfChessboard = changeResolution(imageOfChessboard);
-                pieceList = createPieceList(imageOfChessboard, true);
-                scanInfoButton.setEnabled(true);
+                Bitmap tempImageOfChessboard = image.copy(image.getConfig(), true);
+                imageOfChessboard = changeResolution(tempImageOfChessboard);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -390,29 +441,56 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         return dividedBitmap;
     }
     public List<Piece> createPieceList(Bitmap chessboard, boolean isWhite){
+        // Divide the chessboard into individual images
         List<Bitmap> imageList = divideChessboard(chessboard);
+        // Create strings for the letters and numbers of the board
         String alphabet = "ABCDEFGH";
         String numbers = "87654321";
-        if(!isWhite)
-        {
+        // If it is not white, switch the order of the numbers string
+        if(!isWhite) {
             numbers = "12345678";
         }
-        String field;
-        List<Piece> tempList = new ArrayList<>();
-        int imageNumber = 0;
+        // Create a string to store the field name and an empty list to store pieces in 
+        String field; 
+        List<Piece> tempList = new ArrayList<>(); 
+    
+        // Keep track of which image number we are on 
+        int imageNumber = 0; 
+    
+        // Boolean to keep track of whether or not it is a white field 
         boolean isWhiteField = false;
+    
+        // Loop through each character in the numbers string 
         for(char number: numbers.toCharArray()){
+    
+            // Switch between white and black fields for each row 
             isWhiteField = !isWhiteField;
+    
+            // Loop through each character in the alphabet string  
             for(char letter: alphabet.toCharArray()){
+    
+                // Combine letter and number characters to create a field name  
                 field = letter + Character.toString(number);
+    
+                // Recognize piece with pieceClassifier, get back pair with first being piece name and second being probability  
                 Pair<String, Float> pieceWithProbabilities = pieceClassifier.recognizePiece(imageList.get(imageNumber), isWhiteField);
-                tempList.add(new Piece(field, imageList.get(imageNumber), pieceWithProbabilities.first, pieceWithProbabilities.second));
+    
+                // Create new Piece object with field name, image, piece FENname, and probability
+                tempList.add(new Piece(field, imageList.get(imageNumber), pieceWithProbabilities.first ,pieceWithProbabilities.second));
+    
+                // Switch between white and black fields   
                 isWhiteField = !isWhiteField;
-                imageNumber++;
-            }
-        }
-        return tempList;
-    }
+    
+                // Increment image number   
+                imageNumber++; 
+    
+            }    
+    
+         }     
+    
+         return tempList; 
+    
+     }
 
     public String createFEN(List<String> pieces, boolean isWhite) {
         StringBuilder fen = new StringBuilder();
@@ -450,9 +528,31 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 fen.append('/');
             }
         }
-
+        fen.append(" ");
+        if (isWhite)
+        {
+            fen.append("w");
+        }
+        else {
+            fen.append("b");
+        }
         return fen.toString();
     }
+    public void setChessboard(){
+        pieceList = createPieceList(imageOfChessboard, playerColor);
+        scanInfoButton.setEnabled(true);
+        for (Piece piece : pieceList) {
+            Log.d("Piece ", piece.getRecognizedName());
+        }
+        List<String> pieceFENList = pieceList.stream()
+                .map(piece -> piece.getRecognizedFEN())
+                .collect(Collectors.toList());
 
+        currentPosition = createFEN(pieceFENList, playerColor);
+        Log.d("setChessboard", "currentPosition is " + currentPosition);
+        new RequestDbApiTask().execute(currentPosition);
+        chessView.setFen(currentPosition);
+        new ChangeChessViewTask().execute();
+    }
 
 }

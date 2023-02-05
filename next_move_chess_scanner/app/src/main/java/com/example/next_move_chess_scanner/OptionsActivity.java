@@ -11,17 +11,13 @@ import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-/*
-What options:
-- UCI - SAN NOTATION
-- Language
-- what color u are (disabled if true below)
-- ask everytime what color i am
-- turn on/turn off automatic detect chessboard
--
- */
 public class OptionsActivity extends AppCompatActivity {
-
+    /*
+    This class is an Activity that allows users to customize their settings. 
+    It contains several UI elements such as a Button, Switches and a SeekBar. 
+    The user can choose the language, notation, color and limit the number of moves. 
+    The class also contains two Buttons for saving or cancelling the changes.
+    */
     public Button chooseLanguageButton;
     public Switch chooseNotationSwitch;
     public Switch askWhatColorSwitch;
@@ -85,13 +81,13 @@ public class OptionsActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                setResult(OptionsActivity.RESULT_OK, intent);
+                //setResult(OptionsActivity.RESULT_OK, intent);
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                setResult(OptionsActivity.RESULT_OK, intent);
+                //setResult(OptionsActivity.RESULT_OK, intent);
             }
         });
 

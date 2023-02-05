@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.next_move_chess_scanner.ml.BlackModel;
-import com.example.next_move_chess_scanner.ml.WhiteModel;
+// import com.example.next_move_chess_scanner.ml.BlackModel;
+// import com.example.next_move_chess_scanner.ml.WhiteModel;
 import com.example.next_move_chess_scanner.ml.WhitePiecesModelAll;
 import com.example.next_move_chess_scanner.ml.BlackPiecesModelAll;
 import com.example.next_move_chess_scanner.ml.WhiteBlankOrOccupiedModelAll;
@@ -37,19 +37,19 @@ public final class PieceClassifier {
     PieceClassifier(Context ctx) {
         context = ctx;
         PIECES_NAMES = new String[]{
-                context.getResources().getString(R.string.blackBishop),
-                context.getResources().getString(R.string.whiteBishop),
-                context.getResources().getString(R.string.blackKing),
-                context.getResources().getString(R.string.whiteKing),
-                context.getResources().getString(R.string.blackKnight),
-                context.getResources().getString(R.string.whiteKnight),
-                context.getResources().getString(R.string.blackPawn),
-                context.getResources().getString(R.string.whitePawn),
-                context.getResources().getString(R.string.blackQueen),
-                context.getResources().getString(R.string.whiteQueen),
-                context.getResources().getString(R.string.blackRook),
-                context.getResources().getString(R.string.whiteRook),
-                context.getResources().getString(R.string.blank)
+                "b",
+                "B",
+                "k",
+                "K",
+                "n",
+                "N",
+                "p",
+                "P",
+                "q",
+                "Q",
+                "r",
+                "R",
+                ""
         };
     }
 
@@ -60,17 +60,30 @@ public final class PieceClassifier {
         //ByteBuffer convertedBitmap = convertBitmapToByteBuffer2(piece);
         //ByteBuffer convertedBitmap = TensorImage.fromBitmap(piece).getBuffer();
         float[] arrayWithProbabilities;
+        float isOccupiedProbability;
 
         if(isWhite)
         {
-            arrayWithProbabilities = recognizeWhiteField(convertedBitmap);
+            arrayWithProbabilities = recognizeIsOccupiedWhiteField(convertedBitmap);
+            int index = getMax(arrayWithProbabilities);
+            if(index == 0){
+                return new Pair<>(PIECES_NAMES[12], arrayWithProbabilities[index]);
+            }
+            isOccupiedProbability = arrayWithProbabilities[index];
+            arrayWithProbabilities = recognizePieceWhiteField(convertedBitmap);
         }
         else{
-            arrayWithProbabilities = recognizeBlackField(convertedBitmap);
+            arrayWithProbabilities = recognizeIsOccupiedBlackField(convertedBitmap);
+            int index = getMax(arrayWithProbabilities);
+            if(index == 0){
+                return new Pair<>(PIECES_NAMES[12], arrayWithProbabilities[index]);
+            }
+            isOccupiedProbability = arrayWithProbabilities[index];
+            arrayWithProbabilities = recognizePieceBlackField(convertedBitmap);
         }
         int index = getMax(arrayWithProbabilities);
 
-        return new Pair<>(PIECES_NAMES[index], arrayWithProbabilities[index]);
+        return new Pair<>(PIECES_NAMES[index], isOccupiedProbability*arrayWithProbabilities[index]);
     }
 
     private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap){
@@ -95,14 +108,14 @@ public final class PieceClassifier {
     }
 
 
-    private float[] recognizeWhiteField(ByteBuffer field) {
+    private float[] recognizeIsOccupiedWhiteField(ByteBuffer field) {
         try {
-            WhiteModel model = WhiteModel.newInstance(context.getApplicationContext());
+            WhiteBlankOrOccupiedModelAll model = WhiteBlankOrOccupiedModelAll.newInstance(context.getApplicationContext());
             // Creates inputs for reference.
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 32, 32, 1}, DataType.FLOAT32);
             inputFeature0.loadBuffer(field);
             // Runs model inference and gets result.
-            WhiteModel.Outputs outputs = model.process(inputFeature0);
+            WhiteBlankOrOccupiedModelAll.Outputs outputs = model.process(inputFeature0);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             // Releases model resources if no longer used.
@@ -114,9 +127,9 @@ public final class PieceClassifier {
         return new float[0];
     }
 
-    private float[] recognizeBlackField(ByteBuffer field) {
+    private float[] recognizeIsOccupiedBlackField(ByteBuffer field) {
         try {
-            BlackModel model = BlackModel.newInstance(context.getApplicationContext());
+            BlackBlankOrOccupiedModelAll model = BlackBlankOrOccupiedModelAll.newInstance(context.getApplicationContext());
 
             // Creates inputs for reference.
 
@@ -125,7 +138,7 @@ public final class PieceClassifier {
             inputFeature0.loadBuffer(field);
 
             // Runs model inference and gets result.
-            BlackModel.Outputs outputs = model.process(inputFeature0);
+            BlackBlankOrOccupiedModelAll.Outputs outputs = model.process(inputFeature0);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             // Releases model resources if no longer used.
@@ -136,6 +149,49 @@ public final class PieceClassifier {
         }
         return new float[0];
     }
+
+    private float[] recognizePieceWhiteField(ByteBuffer field) {
+        try {
+            WhitePiecesModelAll model = WhitePiecesModelAll.newInstance(context.getApplicationContext());
+            // Creates inputs for reference.
+            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 32, 32, 1}, DataType.FLOAT32);
+            inputFeature0.loadBuffer(field);
+            // Runs model inference and gets result.
+            WhitePiecesModelAll.Outputs outputs = model.process(inputFeature0);
+            TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+
+            // Releases model resources if no longer used.
+            model.close();
+            return outputFeature0.getFloatArray();
+        } catch (IOException e) {
+            // TODO Handle the exception
+        }
+        return new float[0];
+    }
+
+    private float[] recognizePieceBlackField(ByteBuffer field) {
+        try {
+            BlackPiecesModelAll model = BlackPiecesModelAll.newInstance(context.getApplicationContext());
+
+            // Creates inputs for reference.
+
+            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 32, 32,1}, DataType.FLOAT32);
+
+            inputFeature0.loadBuffer(field);
+
+            // Runs model inference and gets result.
+            BlackPiecesModelAll.Outputs outputs = model.process(inputFeature0);
+            TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+
+            // Releases model resources if no longer used.
+            model.close();
+            return outputFeature0.getFloatArray();
+        } catch (IOException e) {
+            // TODO Handle the exception
+        }
+        return new float[0];
+    }
+
     int getMax(float[] arr){
         int max = 0;
 
