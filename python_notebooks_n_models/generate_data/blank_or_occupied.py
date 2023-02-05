@@ -1,3 +1,4 @@
+from datetime import datetime
 import os, sys
 import numpy as np
 import tensorflow as tf
@@ -8,8 +9,10 @@ from keras.preprocessing.image import ImageDataGenerator
 image_size = (32, 32)
 batch_size = 16
 
+current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
 PATH_TO_DATA = 'blank_or_occupied_data'
-MODEL_NAME = 'blank_or_occupied_model'
+MODEL_NAME = f'blank_or_occupied_model_{current_time}'
 
 datagen_white_fields = ImageDataGenerator(
         rotation_range=5,
@@ -64,8 +67,8 @@ white_model = keras.Sequential(
         layers.Conv2D(128, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Flatten(),
-        layers.Dropout(0.5),
-        layers.Dense(512, activation="relu"),
+        layers.Dropout(0.2),
+        layers.Dense(256, activation="relu"),
         layers.Dense(2, activation="softmax"), # 2 classes
     ]
 )

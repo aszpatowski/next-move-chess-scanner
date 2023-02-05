@@ -22,11 +22,19 @@ pieces_names = {"k": "king_black",
 
 
 def get_names(path: str) -> list:
+    """
+    Function takes in a path as an argument and returns a list of files in that path.
+    """
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 
 def get_fen_lists(file_name: str) -> list:
-
+    """
+    Function takes in a file name as an argument and returns a list of FEN lists. 
+    It first converts the file name into a list, converts any numbers to integers, 
+    replaces any blanks with 'blank', removes any dashes, creates a new list using the dictionary values, 
+    reshapes it into 8x8 array and then returns it as a list.
+    """
 
     fen = list(file_name[:-5])
     for i in range(len(fen)):

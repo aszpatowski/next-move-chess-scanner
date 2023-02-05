@@ -10,15 +10,22 @@ from functions import get_names, get_fen_lists
 
 if __name__ == "__main__":
 
+    # create a list of pieces and colors 
     pieces = ["king", "queen", "knight", "bishop", "rook", "pawn"]
     colors = ["black", "white"]
+
+    # create variables for the paths to train and test data
     data_black_train = "data\\train\\black_fields"
     data_white_train = "data\\train\\white_fields"
     data_black_test = "data\\test\\black_fields"
     data_white_test = "data\\test\\white_fields"
+
+    # create variables for the paths to raw train and test data 
     path = "raw_data"  # https://www.kaggle.com/datasets/koryakinp/chess-positions
     path_train = path + "/train/"
     path_test = path + "/test/"
+
+    # get the names of all files in the train and test directories 
     train_names = get_names(path_train)
     test_names = get_names(path_test)
 

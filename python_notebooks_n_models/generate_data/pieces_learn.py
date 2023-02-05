@@ -1,3 +1,4 @@
+from datetime import datetime
 import os, sys
 import numpy as np
 import tensorflow as tf
@@ -8,8 +9,10 @@ from keras.preprocessing.image import ImageDataGenerator
 image_size = (32, 32)
 batch_size = 16
 
+current_time = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
 PATH_TO_DATA = 'pieces_data'
-MODEL_NAME = 'pieces_model'
+MODEL_NAME = f'pieces_model_{current_time}'
 
 datagen_white_fields = ImageDataGenerator(
         rotation_range=5,
@@ -64,9 +67,9 @@ white_model = keras.Sequential(
         layers.Conv2D(128, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Flatten(),
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
         layers.Dense(512, activation="relu"),
-        layers.Dense(12, activation="softmax"), # 12 classes
+        layers.Dense(12, activation="softmax"), # 12 classes, every possible piece
     ]
 )
 
@@ -111,3 +114,5 @@ tflite_quantized_model = converter_black_model.convert()
 f = open(f'black_{MODEL_NAME}_all.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
+
+# This code imports the necessary libraries for building a convolutional neural network (CNN) using TensorFlow and Keras. It also sets the image size, batch size, path to data, and model name. Two ImageDataGenerators are created for white fields and black fields with rotation range of 5 and fill mode set to 'nearest'. The flow_from_directory method is used to create train and test datasets from the respective directories. A CNN model is then created with 3 Conv2D layers, a Flatten layer, a Dropout layer, 2 Dense layers and an output layer with 12 classes (every possible piece). The model is compiled using Adam optimizer and categorical crossentropy loss function. The model is then trained for 10 epochs on both the white fields and black fields datasets. Finally, two TFLite models are created for both the white fields and black fields datasets using the TFLiteConverter from Keras model method.
