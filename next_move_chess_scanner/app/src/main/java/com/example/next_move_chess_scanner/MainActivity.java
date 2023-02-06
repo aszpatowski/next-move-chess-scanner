@@ -282,6 +282,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
 
 
+
         // Set up the buttons
 
         helpButton.setOnClickListener(new View.OnClickListener() {
@@ -301,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 bundle.putInt("maxResults", maxResults);
                 Intent intent = new Intent(MainActivity.this, OptionsActivity.class);
                 intent.putExtras(bundle);
-                startActivity(intent);;
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -319,6 +320,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 }
                 else {
                     playerColor = defaultColor;
+                    chessView.setSide(playerColor);
+                    setChessboard();
                 }
                 photoDialog.show();
             }
@@ -387,6 +390,31 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 e.printStackTrace();
             }
             Log.d("IMAGE", "IMAGE LOADED");
+        }
+        if (requestCode == 1) {
+            if(resultCode == OptionsActivity.RESULT_OK && data != null){
+                // false - UCI Notation, true - SAN Notation
+                sanNotation = data.getBooleanExtra("sanNotation", sanNotation);
+
+                // false - english, true - polish
+                language = data.getStringExtra("language");
+
+                // false - Don't ask everytime about color use defaultColor , true - ask everytime about color
+                askColor = data.getBooleanExtra("askColor", askColor);
+
+                // if below option is false, set default color, false - white, true - black
+                defaultColor = data.getBooleanExtra("defaultColor", defaultColor);
+
+
+                maxResults = data.getIntExtra("maxResults", maxResults);
+
+                sharedPreferences.edit().putBoolean("sanNotation", sanNotation).commit();
+                sharedPreferences.edit().putString("language", language).commit();
+                sharedPreferences.edit().putBoolean("askColor", askColor).commit();
+                sharedPreferences.edit().putBoolean("defaultColor", defaultColor).commit();
+                sharedPreferences.edit().putInt("maxResults", maxResults).commit();
+            }
+
         }
     }
 

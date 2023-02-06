@@ -84,6 +84,8 @@ public List<Move> sendRequest(String fenNotation) {
                     } catch (JSONException e) {
                         // Print the stack trace if there is an error
                         e.printStackTrace();
+
+
                     }
                 }
             }, new Response.ErrorListener() {
@@ -92,6 +94,7 @@ public List<Move> sendRequest(String fenNotation) {
         public void onErrorResponse(VolleyError error) {
             // Log the error
             Log.d(Tag, "Not work");
+
         }
     });
 
