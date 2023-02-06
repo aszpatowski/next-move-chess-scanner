@@ -2,11 +2,13 @@ package com.example.next_move_chess_scanner;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ public class OptionsActivity extends AppCompatActivity {
     public Switch chooseNotationSwitch;
     public Switch askWhatColorSwitch;
     public Switch defaultColorSwitch;
+    public TextView limitMovesText;
     public SeekBar limitMovesSeek;
 
     public Button saveButton;
@@ -58,6 +61,7 @@ public class OptionsActivity extends AppCompatActivity {
         chooseNotationSwitch = findViewById(R.id.chooseNotation);
         askWhatColorSwitch = findViewById(R.id.askWhatColor);
         defaultColorSwitch = findViewById(R.id.defaultColor);
+        limitMovesText = findViewById(R.id.limitMovesText);
         limitMovesSeek = findViewById(R.id.limitMovesSeek);
 
         saveButton = findViewById(R.id.saveOptions);
@@ -68,6 +72,7 @@ public class OptionsActivity extends AppCompatActivity {
         chooseNotationSwitch.setChecked(sanNotation);
         askWhatColorSwitch.setChecked(askColor);
         defaultColorSwitch.setChecked(defaultColor);
+        limitMovesText.setText(Integer.toString(maxResults));
         limitMovesSeek.setProgress(maxResults);
 
         // Set up the controls
@@ -80,14 +85,52 @@ public class OptionsActivity extends AppCompatActivity {
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                //setResult(OptionsActivity.RESULT_OK, intent);
+                Intent data = new Intent();
+                sanNotation = chooseNotationSwitch.isChecked();
+                askColor = askWhatColorSwitch.isChecked();
+                defaultColor = defaultColorSwitch.isChecked();
+                maxResults = limitMovesSeek.getProgress();
+                data.putExtra("sanNotation",sanNotation);
+                data.putExtra("language",askColor);
+                data.putExtra("askColor",askColor);
+                data.putExtra("color",defaultColor);
+                data.putExtra("maxResults",maxResults);
+                setResult(OptionsActivity.RESULT_OK, data);
+                finish();
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                //setResult(OptionsActivity.RESULT_OK, intent);
+                Intent data = new Intent();
+                data.putExtra("sanNotation",sanNotation);
+                data.putExtra("language",askColor);
+                data.putExtra("askColor",askColor);
+                data.putExtra("color",defaultColor);
+                data.putExtra("maxResults",maxResults);
+                setResult(OptionsActivity.RESULT_OK, data);
+                finish();
+            }
+        });
+        limitMovesSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+
+                limitMovesText.setText(Integer.toString(progress));
+
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 

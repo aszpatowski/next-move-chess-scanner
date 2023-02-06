@@ -12,7 +12,8 @@ batch_size = 16
 current_time = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 
 PATH_TO_DATA = 'blank_or_occupied_data'
-MODEL_NAME = f'blank_or_occupied_model_{current_time}'
+MODEL_NAME = f'pieces_model'
+MODEL_NAME_TIME = MODEL_NAME + "_" + current_time
 
 datagen_white_fields = ImageDataGenerator(
         rotation_range=5,
