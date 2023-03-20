@@ -5,7 +5,9 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from keras.preprocessing.image import ImageDataGenerator
+import cv2
 import random
+import matplotlib.pyplot as plt
 
 image_size = (32, 32)
 batch_size = 32
@@ -26,18 +28,26 @@ def add_noise(img):
     np.clip(img, 0., 255.)
     return img
 
+def rgb_to_hsv(image):
+    return cv2.cvtColor(image,cv2.COLOR_RGB2HSV)
+
+
 datagen_white_fields = ImageDataGenerator(
+    rescale=1./255,
         rotation_range=5,
         horizontal_flip=False,
         fill_mode='nearest',
-        #preprocessing_function=add_noise
+        brightness_range=[0.7,1.3],
+        #preprocessing_function=rgb_to_hsv
 )
 print(datagen_white_fields)
 datagen_black_fields = ImageDataGenerator(
+    rescale=1./255,
         rotation_range=5,
         horizontal_flip=False,
         fill_mode='nearest',
-        #preprocessing_function=add_noise
+        brightness_range=[0.7,1.3],
+        #preprocessing_function=rgb_to_hsv
 )
 print(datagen_black_fields)
 train_white_fields = datagen_white_fields.flow_from_directory(
@@ -45,7 +55,7 @@ train_white_fields = datagen_white_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 2,
+    seed = 12,
     shuffle=True
 )
 test_white_fields = datagen_white_fields.flow_from_directory(
@@ -53,7 +63,7 @@ test_white_fields = datagen_white_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 3,
+    seed = 12,
     shuffle=True
 )
 train_black_fields = datagen_black_fields.flow_from_directory(
@@ -61,7 +71,7 @@ train_black_fields = datagen_black_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 2,
+    seed = 12,
     shuffle=True
 )
 test_black_fields = datagen_black_fields.flow_from_directory(
@@ -69,18 +79,49 @@ test_black_fields = datagen_black_fields.flow_from_directory(
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 3,
+    seed = 12,
     shuffle=True
 )
 
+#plt.figure(figsize=(12, 12))
+#for i in range(0, 15):
+#    plt.subplot(5, 3, i+1)
+#    for X_batch, Y_batch in train_white_fields:
+#        image = X_batch[0]
+#        plt.imshow(image)
+#        break
+#plt.tight_layout()
+#plt.show()
+#exit()
+
+
 white_model = keras.Sequential(
     [
-        keras.Input(shape=(32,32,3)), # 32x32 rgb
-        layers.Conv2D(16, kernel_size=(3, 3), activation="relu"),
-        layers.MaxPooling2D(pool_size=(2, 2)),
-        layers.Flatten(),
-        layers.Dense(8, activation="relu"),
-        layers.Dense(2, activation="softmax"),  # 2 classes, black or white piece
+    layers.Conv2D(32, kernel_size=(3, 3), activation="relu", input_shape=(32,32,3)),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Dropout(0.25),
+
+    layers.Conv2D(64, kernel_size=(3, 3), activation="relu", kernel_regularizer=keras.regularizers.l1_l2(l1=0.01, l2=0.01)),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Dropout(0.25),
+
+    layers.Conv2D(128, kernel_size=(3, 3), activation="relu", kernel_regularizer=keras.regularizers.l1_l2(l1=0.01, l2=0.01)),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Dropout(0.25),
+
+    layers.Conv2D(256, kernel_size=(3, 3), activation="relu", padding="SAME"),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(pool_size=(2, 2)),
+    layers.Dropout(0.25),
+
+    layers.Flatten(),
+    layers.Dense(512, activation="relu"),
+    layers.BatchNormalization(),
+    layers.Dropout(0.5),
+    layers.Dense(2, activation="softmax")
     ]
 )
 
@@ -89,7 +130,7 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 2
+epochs = 3
 
 history = white_model.fit(
     train_white_fields,
@@ -101,7 +142,7 @@ white_model.save_weights(f'archive/white_{MODEL_NAME_TIME}_rgb.h5')
 
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 2
+epochs = 3
 
 history = black_model.fit(
     train_black_fields,

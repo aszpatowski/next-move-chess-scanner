@@ -12,18 +12,22 @@ batch_size = 16
 current_time = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 
 PATH_TO_DATA = 'blank_or_occupied_data'
-MODEL_NAME = f'pieces_model'
+MODEL_NAME = f'blank_or_occupied_model'
 MODEL_NAME_TIME = MODEL_NAME + "_" + current_time
 
 datagen_white_fields = ImageDataGenerator(
+        rescale=1./255,
         rotation_range=5,
         horizontal_flip=False,
-        fill_mode='nearest')
+        fill_mode='nearest',
+        brightness_range=[0.7,1.3])
 print(datagen_white_fields)
 datagen_black_fields = ImageDataGenerator(
+        rescale=1./255,
         rotation_range=5,
         horizontal_flip=False,
-        fill_mode='nearest')
+        fill_mode='nearest',
+        brightness_range=[0.7,1.3])
 print(datagen_black_fields)
 train_white_fields = datagen_white_fields.flow_from_directory(
     f'{PATH_TO_DATA}/train/white_fields',
@@ -78,8 +82,8 @@ white_model.summary()
 
 black_model = keras.models.clone_model(white_model)
 
-white_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-epochs = 10
+white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
+epochs = 2
 
 history = white_model.fit(
     train_white_fields,
@@ -90,8 +94,8 @@ history = white_model.fit(
 white_model.save_weights(f'white_{MODEL_NAME}_all.h5')
 
 
-black_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['categorical_accuracy'])
-epochs = 10
+black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
+epochs = 2
 
 history = black_model.fit(
     train_black_fields,

@@ -3,6 +3,7 @@ import os
 import cv2
 import random
 import numpy as np
+import argparse
 from itertools import cycle
 from functions import get_names, get_fen_lists
 
@@ -29,22 +30,21 @@ if __name__ == "__main__":
     train_names = get_names(path_train)
     test_names = get_names(path_test)
 
-    if len(sys.argv) < 5:
-        print("Give arguments")
-        sys.exit(0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--start_train', type=int, required=True)
+    parser.add_argument('--end_train', type=int ,  required=True)
+    parser.add_argument('--start_test', type=int,  required=True)
+    parser.add_argument('--end_test', type=int,  required=True)
+    args = parser.parse_args()
+
+    if args.start_train <= args.end_train and args.start_test <= args.end_test:
+        start_train = args.start_train
+        end_train = args.end_train
+        start_test = args.start_test
+        end_test = args.end_test
     else:
-        try:
-            if sys.argv[1] <= sys.argv[2] and sys.argv[3] <= sys.argv[4]:
-                start_train = int(sys.argv[1])
-                end_train = int(sys.argv[2])
-                start_test = int(sys.argv[3])
-                end_test = int(sys.argv[4])
-            else:
-                print("Bad arguments")
-                sys.exit(0)
-        except:
-            print("Bad arguments")
-            sys.exit(0)
+        print("Bad arguments")
+        sys.exit(0)
 
     img = cv2.imread(path_train + train_names[0])
     height, width, channels = img.shape
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     print("one_field=", one_field_size)
     create_directory_command = f"mkdir {data_black_train}\\blank & mkdir  {data_white_train}\\blank "
     create_directory_command += f"& mkdir {data_black_test}\\blank & mkdir  {data_white_test}\\blank "
-    # I know that i could write it better
+
     for color in colors:
         for piece in pieces:
             create_directory_command += f"& mkdir {data_black_train}\\{piece}_{color} & mkdir {data_white_train}\\{piece}_{color} "

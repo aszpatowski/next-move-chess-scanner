@@ -148,6 +148,9 @@ public final class PieceClassifier {
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
         for (int pixelValue: pixels) {
+            //Log.d("BufferR", Integer.toString(pixelValue >> 16 & 255 ));
+            //Log.d("BufferG", Integer.toString(pixelValue >> 8 & 255 ));
+            //Log.d("BufferB", Integer.toString(pixelValue & 255 ));
             float r = (pixelValue >> 16 & 255 ) / 255.0f;
             float g = (pixelValue >> 8 & 255) / 255.0f;
             float b = (pixelValue & 255) / 255.0f;
