@@ -57,4 +57,5 @@
     <string name="ok">Rozumiem</string>
     <string name="whatColor">Jakim kolorem grasz?</string>
     <string name="setDefaultColor">Został ustawiony domyślny kolor</string>
+    <string name="setFen">"Ustawiono FEN: "</string>
 </resources>

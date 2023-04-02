@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     private List<Piece> pieceList = new ArrayList<>();
     private ChessDbApi chessDbApi;
     private PieceClassifier pieceClassifier;
-    //private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
-    private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
+    private String currentPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w";
+    //private String currentPosition = "r1bqkb1r/p1pp1ppp/2p2n2/4P3/8/8/PPP2PPP/RNBQKB1R b KQkq - 0 6";
     ActivityResultLauncher <String> mGetContent;
     ChessView chessView;
     SharedPreferences sharedPreferences;
@@ -70,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     public Button getMovesButton;
     public Button scanInfoButton;
 
-    // Variables used to user configuration and changing in OptionsActivity
-    // Described in OnCreate() Method
     public boolean sanNotation;
 
     public String language;
@@ -157,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setText(currentPosition);
         AlertDialog.Builder FENDialogBuilder = new AlertDialog.Builder(this)
                 .setView(input)
                 .setCancelable(false)
@@ -581,9 +580,11 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 .collect(Collectors.toList());
 
         currentPosition = createFEN(pieceFENList, playerColor);
+        Toast.makeText(MainActivity.this, getResources().getString(R.string.setFen) + currentPosition, Toast.LENGTH_LONG).show();
         Log.d("setChessboard", "currentPosition is " + currentPosition);
         new RequestDbApiTask().execute(currentPosition);
         chessView.setFen(currentPosition);
+
         new ChangeChessViewTask().execute();
     }
 

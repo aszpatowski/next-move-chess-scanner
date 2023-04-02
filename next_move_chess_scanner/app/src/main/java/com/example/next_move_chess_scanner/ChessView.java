@@ -122,9 +122,9 @@ class ChessView extends View {
     protected void highlightSquareAt(Canvas canvas, int col, int row, int color) {
         paint.setColor(color);
         if(isBlack)
-            canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
-        else
             canvas.drawRect(originX + col * cellSide, originY + (7-row) * cellSide, originX + (col + 1) * cellSide, originY + (7-row + 1) * cellSide, paint);
+        else
+            canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
     }
 
     private void loadBitmaps() {

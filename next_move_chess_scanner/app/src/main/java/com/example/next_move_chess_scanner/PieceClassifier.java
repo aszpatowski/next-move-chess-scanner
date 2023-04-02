@@ -5,10 +5,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.Pair;
 
-// import com.example.next_move_chess_scanner.ml.BlackModel;
-// import com.example.next_move_chess_scanner.ml.WhiteModel;
-// import com.example.next_move_chess_scanner.ml.WhitePiecesModelAll;
-// import com.example.next_move_chess_scanner.ml.BlackPiecesModelAll;
 import com.example.next_move_chess_scanner.ml.WhiteBlankOrOccupiedModelAll;
 import com.example.next_move_chess_scanner.ml.BlackBlankOrOccupiedModelAll;
 
