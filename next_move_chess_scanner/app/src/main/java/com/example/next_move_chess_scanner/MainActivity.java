@@ -326,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             }
         });
         reverseButton.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View v) {
                 chessView.changeSides();
                 new ChangeChessViewTask().execute();

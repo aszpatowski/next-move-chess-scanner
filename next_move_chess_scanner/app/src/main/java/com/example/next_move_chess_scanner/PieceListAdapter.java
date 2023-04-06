@@ -17,7 +17,7 @@ public class PieceListAdapter extends RecyclerView.Adapter<PieceListAdapter.Piec
     private List<Piece> pieceList;
     private final LayoutInflater inflater;
     private PieceListAdapter.AdapterCallback mAdapterCallback;
-    private static final DecimalFormat df = new DecimalFormat("0.000");
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public PieceListAdapter(Context context, List<Piece> pieceList) {
         inflater = LayoutInflater.from(context);
