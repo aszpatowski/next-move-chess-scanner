@@ -19,18 +19,18 @@ class DatasetsCreator:
         self.__create_base_structure(name)
         for category in [self.path_train, self.path_test]:
             for color_field in [self.black_fields, self.white_fields]:
-                # occupied_path = os.path.join(name, category, color_field, "occupied")
-                # blank_path = os.path.join(name, category, color_field, "blank")
-                # os.makedirs(occupied_path)
-                # os.makedirs(blank_path)
-                # for color in self.colors:
-                #     for piece in self.pieces:
-                #         curr_dir = os.path.join(path,category,color_field,piece+"_"+color)
-                #         for file_name in os.scandir(curr_dir):
-                #             shutil.copy2(os.path.join(curr_dir,file_name.name), occupied_path)
-                # curr_dir = os.path.join(path, category,color_field,self.blank)
-                # for file_name in os.scandir(curr_dir):
-                #     shutil.copy2(os.path.join(curr_dir,file_name.name), blank_path)
+                occupied_path = os.path.join(name, category, color_field, "occupied")
+                blank_path = os.path.join(name, category, color_field, "blank")
+                os.makedirs(occupied_path)
+                os.makedirs(blank_path)
+                for color in self.colors:
+                    for piece in self.pieces:
+                        curr_dir = os.path.join(path,category,color_field,piece+"_"+color)
+                        for file_name in os.scandir(curr_dir):
+                            shutil.copy2(os.path.join(curr_dir,file_name.name), occupied_path)
+                curr_dir = os.path.join(path, category,color_field,self.blank)
+                for file_name in os.scandir(curr_dir):
+                    shutil.copy2(os.path.join(curr_dir,file_name.name), blank_path)
                 self.__equalize_directory_sizes(os.path.join(name, category, color_field))
                 
                 
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     path = args.dataset_path
     datasets_creator = DatasetsCreator(path)
     datasets_creator.create_occupied_data()
-    #datasets_creator.create_color_data()
-    #datasets_creator.create_pieces_data()
+    datasets_creator.create_color_data()
+    datasets_creator.create_pieces_data()
     end = timer()
     print(end - start, "s")
