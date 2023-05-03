@@ -1,10 +1,9 @@
 from datetime import datetime
-import os, sys
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
 
 image_size = (32, 32)
 batch_size = 16
@@ -62,6 +61,22 @@ test_black_fields = datagen_black_fields.flow_from_directory(
     shuffle=True
 )
 
+# Used to generate graphs, uncomment below lines to generate graphs without learn new models
+# plt.figure(figsize=(12, 12))
+# for i in range(0, 15):
+#     plt.subplot(5, 3, i+1)
+#     for X_batch, Y_batch in test_black_fields:
+#         image = X_batch[0]
+#         state = "Puste" if Y_batch[0][0] == 1 else "Zajęte"
+#         plt.imshow(image, cmap='gray')
+#         plt.xlim(0,32)
+#         plt.ylim(32,0)
+#         plt.title(state, size=14)
+#         break
+# plt.tight_layout()
+# plt.show()
+# exit()
+
 white_model = keras.Sequential(
     [
         keras.Input(shape=(32,32,1)), # 32x32 grayscale
@@ -72,7 +87,7 @@ white_model = keras.Sequential(
         layers.Conv2D(128, kernel_size=(3, 3), activation="relu"),
         layers.MaxPooling2D(pool_size=(2, 2)),
         layers.Flatten(),
-        # layers.Dropout(0.2),
+        layers.Dropout(0.5),
         layers.Dense(256, activation="relu"),
         layers.Dense(2, activation="softmax"), # 2 classes
     ]
@@ -83,7 +98,7 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 2
+epochs = 3
 
 history = white_model.fit(
     train_white_fields,
@@ -95,7 +110,7 @@ white_model.save_weights(f'white_{MODEL_NAME}_all.h5')
 
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 2
+epochs = 3
 
 history = black_model.fit(
     train_black_fields,

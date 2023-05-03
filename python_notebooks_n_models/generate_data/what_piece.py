@@ -1,12 +1,8 @@
 from datetime import datetime
-import os, sys
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from keras.preprocessing.image import ImageDataGenerator
-import cv2
-import random
 import matplotlib.pyplot as plt
 
 image_size = (32, 32)
@@ -19,25 +15,12 @@ MODEL_NAME_TIME = f'pieces_model_{current_time}'
 MODEL_NAME = f'pieces_model'
 
 
-def add_noise(img):
-    '''Add random noise to an image'''
-    VARIABILITY = 20
-    deviation = VARIABILITY * random.random()
-    noise = np.random.normal(0, deviation, img.shape)
-    img += noise
-    np.clip(img, 0., 255.)
-    return img
-# def rgb_to_gray(image):
-#     return cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
-
-
 datagen_white_fields_white = ImageDataGenerator(
         rescale=1./255,
         rotation_range=5,
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
-        preprocessing_function=add_noise
         )
 
 print(datagen_white_fields_white)
@@ -47,7 +30,6 @@ datagen_black_fields_white = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
-        preprocessing_function=add_noise
         )
 
 print(datagen_black_fields_white)
@@ -58,7 +40,6 @@ datagen_white_fields_black = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
-        preprocessing_function=add_noise
         )
 
 print(datagen_white_fields_black)
@@ -68,7 +49,6 @@ datagen_black_fields_black = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
-        preprocessing_function=add_noise
         )
 
 print(datagen_black_fields_black)
@@ -138,17 +118,22 @@ test_black_fields_black = datagen_black_fields_black.flow_from_directory(
     seed=3,
     shuffle=True
 )
-
-# plt.figure(figsize=(12, 12))
-# for i in range(0, 15):
-#     plt.subplot(5, 3, i+1)
-#     for X_batch, Y_batch in test_white_fields_white:
-#         image = X_batch[0]
-#         plt.imshow(image, cmap='gray')
-#         break
-# plt.tight_layout()
-# plt.show()
-# exit()
+# Used to generate graphs, uncomment below lines to generate graphs without learn new models
+figures = ["Goniec", "Król", "Skoczek", "Pionek", "Hetman" ,"Wieża"]
+plt.figure(figsize=(12, 12))
+for i in range(0, 15):
+    plt.subplot(5, 3, i+1)
+    for X_batch, Y_batch in train_black_fields_white:
+        image = X_batch[0]
+        figure = figures[list(Y_batch[0]).index(1)]
+        plt.imshow(image, cmap='gray')
+        plt.xlim(0,32)
+        plt.ylim(32,0)
+        plt.title(figure, size=14)
+        break
+plt.tight_layout()
+plt.show()
+exit()
 
 
 model = keras.Sequential(
@@ -186,7 +171,7 @@ model.summary()
 def learn_and_save(model_template, color_field, color_piece, train_data, test_data):
     model = keras.models.clone_model(model_template)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    epochs = 5
+    epochs = 6
 
     history = model.fit(
         train_data,

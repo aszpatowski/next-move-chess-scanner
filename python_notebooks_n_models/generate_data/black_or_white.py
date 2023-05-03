@@ -1,12 +1,10 @@
 from datetime import datetime
 import os, sys
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from keras.preprocessing.image import ImageDataGenerator
 import cv2
-import random
 import matplotlib.pyplot as plt
 
 image_size = (32, 32)
@@ -19,15 +17,6 @@ MODEL_NAME = f'black_or_white_model'
 MODEL_NAME_TIME = MODEL_NAME + "_" + current_time
 
 
-def add_noise(img):
-    # Add random noise to an image
-    VARIABILITY = 50
-    deviation = VARIABILITY*random.random()
-    noise = np.random.normal(0, deviation, img.shape)
-    img += noise
-    np.clip(img, 0., 255.)
-    return img
-
 def rgb_to_hsv(image):
     return cv2.cvtColor(image,cv2.COLOR_RGB2HSV)
 
@@ -37,16 +26,20 @@ datagen_white_fields = ImageDataGenerator(
         rotation_range=5,
         horizontal_flip=False,
         fill_mode='nearest',
-        brightness_range=[0.7,1.3],
+        brightness_range=[0.65,1.35],
+        width_shift_range=0.15,
+        height_shift_range=0.15,
         #preprocessing_function=rgb_to_hsv
 )
 print(datagen_white_fields)
 datagen_black_fields = ImageDataGenerator(
-    rescale=1./255,
+        rescale=1./255,
         rotation_range=5,
         horizontal_flip=False,
         fill_mode='nearest',
-        brightness_range=[0.7,1.3],
+        width_shift_range=0.15,
+        height_shift_range=0.15,
+        brightness_range=[0.65,1.35],
         #preprocessing_function=rgb_to_hsv
 )
 print(datagen_black_fields)
@@ -82,17 +75,21 @@ test_black_fields = datagen_black_fields.flow_from_directory(
     seed = 12,
     shuffle=True
 )
-
-#plt.figure(figsize=(12, 12))
-#for i in range(0, 15):
-#    plt.subplot(5, 3, i+1)
-#    for X_batch, Y_batch in train_white_fields:
-#        image = X_batch[0]
-#        plt.imshow(image)
-#        break
-#plt.tight_layout()
-#plt.show()
-#exit()
+# Used to generate graphs, uncomment below lines to generate graphs without learn new models
+# plt.figure(figsize=(12, 12))
+# for i in range(0, 15):
+#     plt.subplot(5, 3, i+1)
+#     for X_batch, Y_batch in test_black_fields:
+#         image = X_batch[0]
+#         color = "Czarny" if Y_batch[0][0] == 1 else "Biały"
+#         plt.imshow(image)
+#         plt.xlim(0,32)
+#         plt.ylim(32,0)
+#         plt.title(color, size=14)
+#         break
+# plt.tight_layout()
+# plt.show()
+# exit()
 
 
 white_model = keras.Sequential(
@@ -118,7 +115,7 @@ white_model = keras.Sequential(
     layers.Dropout(0.25),
 
     layers.Flatten(),
-    layers.Dense(512, activation="relu"),
+    layers.Dense(1024, activation="relu"),
     layers.BatchNormalization(),
     layers.Dropout(0.5),
     layers.Dense(2, activation="softmax")
@@ -130,7 +127,7 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 3
+epochs = 8
 
 history = white_model.fit(
     train_white_fields,
@@ -142,7 +139,7 @@ white_model.save_weights(f'archive/white_{MODEL_NAME_TIME}_rgb.h5')
 
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 3
+epochs = 8
 
 history = black_model.fit(
     train_black_fields,
