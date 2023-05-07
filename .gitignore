@@ -1,10 +1,8 @@
 raw_data/
-raw_data_all/
-pieces_data*/
-blank_or_occupied_data*/
-black_or_white_data*/
+pieces_data/
+blank_or_occupied_data/
+black_or_white_data/
 __pycache__/
 data/
 .idea
-test_black_white.py
 *.pgn
