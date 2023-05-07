@@ -6,8 +6,6 @@ from timeit import default_timer as timer
 
 class DatasetsCreator:
     def __init__(self, path):
-        self.path_train = "train"
-        self.path_test = "test"
         self.black_fields = "black_fields"
         self.white_fields = "white_fields"
         self.pieces = ["king", "queen", "knight", "bishop", "rook", "pawn"]
@@ -17,59 +15,59 @@ class DatasetsCreator:
     def create_occupied_data(self):
         name = "blank_or_occupied_data"
         self.__create_base_structure(name)
-        for category in [self.path_train, self.path_test]:
-            for color_field in [self.black_fields, self.white_fields]:
-                occupied_path = os.path.join(name, category, color_field, "occupied")
-                blank_path = os.path.join(name, category, color_field, "blank")
-                os.makedirs(occupied_path)
-                os.makedirs(blank_path)
-                for color in self.colors:
-                    for piece in self.pieces:
-                        curr_dir = os.path.join(path,category,color_field,piece+"_"+color)
-                        for file_name in os.scandir(curr_dir):
-                            shutil.copy2(os.path.join(curr_dir,file_name.name), occupied_path)
-                curr_dir = os.path.join(path, category,color_field,self.blank)
-                for file_name in os.scandir(curr_dir):
-                    shutil.copy2(os.path.join(curr_dir,file_name.name), blank_path)
-                self.__equalize_directory_sizes(os.path.join(name, category, color_field))
+        print("START ", name)
+        for color_field in [self.black_fields, self.white_fields]:
+            occupied_path = os.path.join(name, color_field, "occupied")
+            blank_path = os.path.join(name, color_field, "blank")
+            os.makedirs(occupied_path)
+            os.makedirs(blank_path)
+            for color in self.colors:
+                for piece in self.pieces:
+                    curr_dir = os.path.join(path, color_field,piece+"_"+color)
+                    print("Start: ", curr_dir)
+                    for file_name in os.scandir(curr_dir):
+                        shutil.copy2(os.path.join(curr_dir,file_name.name), occupied_path)
+            curr_dir = os.path.join(path, color_field, self.blank)
+            print("Start: ", curr_dir)
+            for file_name in os.scandir(curr_dir):
+                shutil.copy2(os.path.join(curr_dir,file_name.name), blank_path)
+            self.__equalize_directory_sizes(os.path.join(name, color_field))
                 
                 
 
     def create_color_data(self):
         name = "black_or_white_data"
         self.__create_base_structure(name)
-
-        for category in [self.path_train, self.path_test]:
-            for color_field in [self.black_fields, self.white_fields]:
-                for color in self.colors:
-                    color_path = os.path.join(name, category, color_field, color)
-                    os.makedirs(color_path)
-                    for piece in self.pieces:
-                        curr_dir = os.path.join(path,category,color_field,piece+"_"+color)
-                        for file_name in os.scandir(curr_dir):
-                            shutil.copy2(os.path.join(curr_dir,file_name.name), color_path)
-                self.__equalize_directory_sizes(os.path.join(name, category, color_field))
+        print("START ", name)
+        for color_field in [self.black_fields, self.white_fields]:
+            for color in self.colors:
+                color_path = os.path.join(name, color_field, color)
+                print("Start: ", color_path)
+                os.makedirs(color_path)
+                for piece in self.pieces:
+                    curr_dir = os.path.join(path, color_field,piece+"_"+color)
+                    for file_name in os.scandir(curr_dir):
+                        shutil.copy2(os.path.join(curr_dir,file_name.name), color_path)
+            self.__equalize_directory_sizes(os.path.join(name, color_field))
 
     def create_pieces_data(self):
         name = "pieces_data"
         self.__create_base_structure(name)
-
-        for category in [self.path_train, self.path_test]:
-            for color_field in [self.black_fields, self.white_fields]:
-                for color in self.colors:
-                    for piece in self.pieces:
-                        piece_path = os.path.join(name, category, color_field,color,piece)
-                        print(piece_path)
-                        os.makedirs(piece_path)
-                        curr_dir = os.path.join(path,category,color_field,piece+"_"+color)
-                        for file_name in os.scandir(curr_dir):
-                            shutil.copy2(os.path.join(curr_dir,file_name.name), piece_path)
-                    self.__equalize_directory_sizes(os.path.join(name, category, color_field, color))
+        print("START ", name)
+        for color_field in [self.black_fields, self.white_fields]:
+            for color in self.colors:
+                for piece in self.pieces:
+                    piece_path = os.path.join(name, color_field,color,piece)
+                    print("Start: ", piece_path)
+                    os.makedirs(piece_path)
+                    curr_dir = os.path.join(path,color_field,piece+"_"+color)
+                    for file_name in os.scandir(curr_dir):
+                        shutil.copy2(os.path.join(curr_dir,file_name.name), piece_path)
+                self.__equalize_directory_sizes(os.path.join(name, color_field, color))
 
     def __create_base_structure(self, name):
-        for category in ["train", "test"]:
-            for color_field in [self.black_fields, self.white_fields]:
-                os.makedirs(os.path.join(name, category, color_field), exist_ok=True)
+        for color_field in [self.black_fields, self.white_fields]:
+            os.makedirs(os.path.join(name, color_field), exist_ok=True)
 
     def __equalize_directory_sizes(self, directory_path):
         """

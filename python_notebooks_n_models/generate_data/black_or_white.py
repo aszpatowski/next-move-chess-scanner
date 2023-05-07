@@ -5,10 +5,13 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from keras.preprocessing.image import ImageDataGenerator
 import cv2
-import matplotlib.pyplot as plt
+from functions import make_plot
+from timeit import default_timer as timer
+
+start = timer()
 
 image_size = (32, 32)
-batch_size = 32
+batch_size = 64
 
 current_time = datetime.now().strftime("%Y-%m-%d_%H_%M_%S")
 
@@ -29,7 +32,7 @@ datagen_white_fields = ImageDataGenerator(
         brightness_range=[0.65,1.35],
         width_shift_range=0.15,
         height_shift_range=0.15,
-        #preprocessing_function=rgb_to_hsv
+        validation_split=0.20
 )
 print(datagen_white_fields)
 datagen_black_fields = ImageDataGenerator(
@@ -40,46 +43,57 @@ datagen_black_fields = ImageDataGenerator(
         width_shift_range=0.15,
         height_shift_range=0.15,
         brightness_range=[0.65,1.35],
-        #preprocessing_function=rgb_to_hsv
+        validation_split=0.20
 )
 print(datagen_black_fields)
-train_white_fields = datagen_white_fields.flow_from_directory(
-    f'{PATH_TO_DATA}/train/white_fields',
+train_white_fields_generator = datagen_white_fields.flow_from_directory(
+    f'{PATH_TO_DATA}/white_fields',
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 12,
-    shuffle=True
+    seed = 1,
+    shuffle=True,
+    batch_size=batch_size,
+    subset='training'
 )
-test_white_fields = datagen_white_fields.flow_from_directory(
-    f'{PATH_TO_DATA}/test/white_fields',
+
+validation_white_fields_generator = datagen_white_fields.flow_from_directory(
+    f'{PATH_TO_DATA}/white_fields',
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 12,
-    shuffle=True
+    seed = 1,
+    shuffle=True,
+    batch_size=batch_size,
+    subset='validation'
 )
-train_black_fields = datagen_black_fields.flow_from_directory(
-    f'{PATH_TO_DATA}/train/black_fields',
+
+train_black_fields_generator = datagen_black_fields.flow_from_directory(
+    f'{PATH_TO_DATA}/black_fields',
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 12,
-    shuffle=True
+    seed = 1,
+    shuffle=True,
+    batch_size=batch_size,
+    subset='training'
 )
-test_black_fields = datagen_black_fields.flow_from_directory(
-   f'{PATH_TO_DATA}/test/black_fields',
+
+validation_black_fields_generator = datagen_black_fields.flow_from_directory(
+    f'{PATH_TO_DATA}/black_fields',
     target_size = image_size,
     class_mode = 'categorical',
     color_mode = 'rgb',
-    seed = 12,
-    shuffle=True
+    seed = 1,
+    shuffle=True,
+    batch_size=batch_size,
+    subset='validation'
 )
 # Used to generate graphs, uncomment below lines to generate graphs without learn new models
 # plt.figure(figsize=(12, 12))
 # for i in range(0, 15):
 #     plt.subplot(5, 3, i+1)
-#     for X_batch, Y_batch in test_black_fields:
+#     for X_batch, Y_batch in black_fields:
 #         image = X_batch[0]
 #         color = "Czarny" if Y_batch[0][0] == 1 else "Biały"
 #         plt.imshow(image)
@@ -127,26 +141,29 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 8
+epochs = 100
 
 history = white_model.fit(
-    train_white_fields,
-    epochs=epochs,
-    validation_data=test_white_fields
-    )
+    train_white_fields_generator,
+    steps_per_epoch = train_white_fields_generator.samples // batch_size,
+    validation_data = validation_white_fields_generator, 
+    validation_steps = validation_white_fields_generator.samples // batch_size,
+    epochs = epochs)
 
-white_model.save_weights(f'archive/white_{MODEL_NAME_TIME}_rgb.h5')
-
+white_model.save(f'archive/white_{MODEL_NAME_TIME}_rgb.h5')
+make_plot(history, f'white_{MODEL_NAME}_{epochs}_epochs.png')
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 8
+epochs = 100
 
 history = black_model.fit(
-    train_black_fields,
-    epochs=epochs,
-    validation_data=test_black_fields
-    )
-black_model.save_weights(f'archive/black_{MODEL_NAME_TIME}_rgb.h5')
+    train_black_fields_generator,
+    steps_per_epoch = train_black_fields_generator.samples // batch_size,
+    validation_data = validation_black_fields_generator, 
+    validation_steps = validation_black_fields_generator.samples // batch_size,
+    epochs = epochs)
+black_model.save(f'archive/black_{MODEL_NAME_TIME}_rgb.h5')
+make_plot(history, f'black_{MODEL_NAME}_{epochs}_epochs.png')
 
 converter_white_model = tf.lite.TFLiteConverter.from_keras_model(white_model)
 converter_white_model.optimizations = [tf.lite.Optimize.DEFAULT]
@@ -156,7 +173,7 @@ f = open(f'archive/white_{MODEL_NAME_TIME}_rgb.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
 
-f = open(f'white_{MODEL_NAME}_rgb.tflite', "wb")
+f = open(f'models/white_{MODEL_NAME}_rgb.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
 
@@ -168,14 +185,15 @@ f = open(f'archive/black_{MODEL_NAME_TIME}_rgb.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
 
-f = open(f'black_{MODEL_NAME}_rgb.tflite', "wb")
+f = open(f'models/black_{MODEL_NAME}_rgb.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
+end = timer()
+print(MODEL_NAME ," learn ends", end - start, "s")
 
 # This code imports the necessary libraries for building a convolutional neural network (CNN) using TensorFlow and Keras.
 # It also sets the image size, batch size, path to data, and model name.
 # Two ImageDataGenerators are created for white fields and black fields with rotation range of 5 and fill mode set to 'nearest'.
-# The flow_from_directory method is used to create train and test datasets from the respective directories.
 # A CNN model is then created with 3 Conv2D layers, a Flatten layer, a Dropout layer, 2 Dense layers and an output layer with 12 classes (every possible piece).
 # The model is compiled using Adam optimizer and categorical crossentropy loss function. The model is then trained for 10 epochs on both the white fields and black fields datasets.
 # Finally, two TFLite models are created for both the white fields and black fields datasets using the TFLiteConverter from Keras model method.

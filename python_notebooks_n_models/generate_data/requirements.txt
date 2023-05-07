@@ -1,0 +1,5 @@
+cudatoolkit=11.7.0
+cudnn=8.1.0.77
+tensorflow=2.10.0
+opencv-python=4.6.0.66
+keras=2.10.0

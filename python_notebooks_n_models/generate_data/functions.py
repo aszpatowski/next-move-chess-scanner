@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 pieces = ["king", "queen", "knight", "bishop", "rook", "pawn"]
 colors = ["black", "white"]
@@ -54,3 +55,51 @@ def get_fen_lists(file_name: str) -> list:
     fen = [pieces_names[key] for key in fen]
     fen = np.array(fen).reshape(8, 8).tolist()
     return fen
+
+def make_plot(model, name, binary=True):
+    history = model.history
+
+    if binary:
+        train_acc = history['binary_accuracy']
+        val_acc = history['val_binary_accuracy']
+    else:
+        train_acc = history['accuracy']
+        val_acc = history['val_accuracy']
+
+    train_loss = history['loss']
+    val_loss = history['val_loss']
+
+    num_epochs = len(train_acc)
+    # Przygotowanie danych do wykresów
+    epochs = range(1, num_epochs + 1)
+    
+
+    # Tworzenie wykresu z dwoma podwykresami
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8))
+
+    fig.subplots_adjust(hspace=0.5)
+    # Wykres accuracy
+    ax1.plot(epochs, train_acc, '-', label='Dokładność trenowania',)
+    ax1.plot(epochs, val_acc, '--', label='Dokładność walidacji')
+    # ax1.set_xticks(range(0, num_epochs+1, 2))
+    # ax1.set_xticklabels(range(0, num_epochs+1, 2))
+    ax1.set_title('Dokładność modelu')
+    ax1.set_xlabel('Epoka')
+    ax1.set_ylabel('Dokładność')
+    ax1.legend()
+
+    # Wykres loss
+    ax2.plot(epochs, train_loss, '-', label='Strata trenowania')
+    ax2.plot(epochs, val_loss, '--', label='Strata walidacji')
+    # ax2.set_xticks(range(0, num_epochs+1, 2))
+    # ax2.set_xticklabels(range(0, num_epochs+1, 2))
+    ax2.set_title('Strata modelu')
+    ax2.set_xlabel('Epoka')
+    ax2.set_ylabel('Strata')
+    ax2.legend()
+
+    # Ustawienie tekstu na polski
+    plt.rcParams.update({'font.size': 14})
+
+    # Zapisanie wykresu do pliku
+    plt.savefig(f"graphs/{name}", dpi=300, bbox_inches='tight')
