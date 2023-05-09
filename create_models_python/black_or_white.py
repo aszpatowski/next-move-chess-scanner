@@ -141,7 +141,7 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 100
+epochs = 10
 
 history = white_model.fit(
     train_white_fields_generator,
@@ -154,7 +154,7 @@ white_model.save(f'archive/white_{MODEL_NAME_TIME}_rgb.h5')
 make_plot(history, f'white_{MODEL_NAME}_{epochs}_epochs.png')
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 100
+epochs = 10
 
 history = black_model.fit(
     train_black_fields_generator,

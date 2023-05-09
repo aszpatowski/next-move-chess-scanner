@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     ChessView chessView;
     SharedPreferences sharedPreferences;
     Bitmap imageOfChessboard;
-    public boolean playerColor;
+    public boolean isPlayerBlack;
     
     public Button helpButton;
     public Button settingsButton;
@@ -249,8 +249,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 .setPositiveButton(getResources().getString(R.string.white), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        playerColor = false;
-                        chessView.setSide(playerColor);
+                        isPlayerBlack = false;
+                        chessView.setSide(isPlayerBlack);
                         setChessboard();
                         dialog.cancel();
                         return;
@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 .setNegativeButton(getResources().getString(R.string.black), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        playerColor = true;
-                        chessView.setSide(playerColor);
+                        isPlayerBlack = true;
+                        chessView.setSide(isPlayerBlack);
                         setChessboard();
                         dialog.cancel();
                         return;
@@ -269,8 +269,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 .setNeutralButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        playerColor = defaultColor;
-                        chessView.setSide(playerColor);
+                        isPlayerBlack = defaultColor;
+                        chessView.setSide(isPlayerBlack);
                         setChessboard();
                         dialog.cancel();
                         Toast.makeText(MainActivity.this, getResources().getString(R.string.setDefaultColor), Toast.LENGTH_SHORT).show();
@@ -318,8 +318,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                     whatColorDialog.show();
                 }
                 else {
-                    playerColor = defaultColor;
-                    chessView.setSide(playerColor);
+                    isPlayerBlack = defaultColor;
+                    chessView.setSide(isPlayerBlack);
                     setChessboard();
                 }
                 photoDialog.show();
@@ -335,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
         getMovesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                moveListAdapter = new MoveListAdapter(MainActivity.this, moveList, sanNotation);
                 moveListAdapter.setMoveList(moveList);
                 recyclerView.setAdapter(moveListAdapter);
                 chessView.setPointer(moveList.get(0).getUCIMove());
@@ -413,6 +414,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 sharedPreferences.edit().putBoolean("askColor", askColor).commit();
                 sharedPreferences.edit().putBoolean("defaultColor", defaultColor).commit();
                 sharedPreferences.edit().putInt("maxResults", maxResults).commit();
+
             }
 
         }
@@ -524,11 +526,11 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     
      }
 
-    public String createFEN(List<String> pieces, boolean isWhite) {
+    public String createFEN(List<String> pieces, boolean isPlayerBlack) {
         StringBuilder fen = new StringBuilder();
 
         // If the order of pieces is from position H8 to A1, reverse the order of elements in the pieces list
-        if (!isWhite) {
+        if (!isPlayerBlack) {
             Collections.reverse(pieces);
         }
 
@@ -560,27 +562,49 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 fen.append('/');
             }
         }
-        fen.append(" ");
-        if (isWhite)
-        {
-            fen.append("w");
+        String fenString = fen.toString();
+        String whoMoves = isPlayerBlack ? " b" : " w";
+        String castling = " " + availableCastlingMoves(fenString);
+        return fenString + whoMoves + castling;
+    }
+    public static String availableCastlingMoves(String fen) {
+
+        String[] blackLine = replaceDigitsWithOnes(fen.split("/")[0]).split("");
+        String[] whiteLine = replaceDigitsWithOnes(fen.split("/")[7]).split("");
+        Log.d("CastlingBlack", replaceDigitsWithOnes(fen.split("/")[0]));
+        Log.d("CastlingWhite", replaceDigitsWithOnes(fen.split("/")[7]));
+        String kingSideWhite = whiteLine[7].equals("R") && whiteLine[4].equals("K") ? "K" : "";
+        String queenSideWhite = whiteLine[0].equals("R") && whiteLine[4].equals("K") ? "Q": "";
+        String kingSideBlack = blackLine[7].equals("r") && blackLine[4].equals("k") ? "k" : "";
+        String queenSideBlack = blackLine[0].equals("r") && blackLine[4].equals("k") ? "q": "";
+        return kingSideWhite + queenSideWhite + kingSideBlack + queenSideBlack;
+    }
+    public static String replaceDigitsWithOnes(String text) {
+        String result = "";
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            if (Character.isDigit(character)) {
+                int digit = Character.getNumericValue(character);
+                String ones = "";
+                for (int j = 0; j < digit; j++) {
+                    ones += "1";
+                }
+                result += ones;
+            } else {
+                result += character;
+            }
         }
-        else {
-            fen.append("b");
-        }
-        return fen.toString();
+        return result;
     }
     public void setChessboard(){
-        pieceList = createPieceList(imageOfChessboard, playerColor);
+        pieceList = createPieceList(imageOfChessboard, isPlayerBlack);
+        Log.d("dfd", String.valueOf(isPlayerBlack));
         scanInfoButton.setEnabled(true);
-        for (Piece piece : pieceList) {
-            Log.d("Piece ", piece.getRecognizedName());
-        }
         List<String> pieceFENList = pieceList.stream()
                 .map(piece -> piece.getRecognizedFEN())
                 .collect(Collectors.toList());
 
-        currentPosition = createFEN(pieceFENList, playerColor);
+        currentPosition = createFEN(pieceFENList, isPlayerBlack);
         Toast.makeText(MainActivity.this, getResources().getString(R.string.setFen) + currentPosition, Toast.LENGTH_LONG).show();
         Log.d("setChessboard", "currentPosition is " + currentPosition);
         new RequestDbApiTask().execute(currentPosition);

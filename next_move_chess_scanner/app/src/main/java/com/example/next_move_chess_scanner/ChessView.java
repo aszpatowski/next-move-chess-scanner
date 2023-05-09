@@ -122,7 +122,7 @@ class ChessView extends View {
     protected void highlightSquareAt(Canvas canvas, int col, int row, int color) {
         paint.setColor(color);
         if(isBlack)
-            canvas.drawRect(originX + col * cellSide, originY + (7-row) * cellSide, originX + (col + 1) * cellSide, originY + (7-row + 1) * cellSide, paint);
+            canvas.drawRect(originX + (7-col) * cellSide, originY + (7-row) * cellSide, originX + (7-col + 1) * cellSide, originY + (7-row + 1) * cellSide, paint);
         else
             canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
     }
@@ -155,7 +155,7 @@ class ChessView extends View {
         isPointer = true;
     }
     public void changeSides(){
-        if (isBlack ==true)
+        if (isBlack)
             isBlack = false;
         else
             isBlack = true;
@@ -176,7 +176,6 @@ class ChessView extends View {
         int column = 0;
         int addColumns = 1;
         while (currentFen.charAt(i) != space) {
-            Log.d("ChessView", " char: " + currentFen.charAt(i));
             if (Character.isDigit(currentFen.charAt(i))) {
                 addColumns = Character.getNumericValue(currentFen.charAt(i));
             }
