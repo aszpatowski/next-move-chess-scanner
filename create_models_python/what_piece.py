@@ -25,6 +25,8 @@ datagen_white_fields_white = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
+        width_shift_range=0.15,
+        height_shift_range=0.15,
         validation_split=0.20
         )
 
@@ -35,6 +37,8 @@ datagen_black_fields_white = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
+        width_shift_range=0.15,
+        height_shift_range=0.15,
         validation_split=0.20
         )
 
@@ -46,6 +50,8 @@ datagen_white_fields_black = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
+        width_shift_range=0.15,
+        height_shift_range=0.15,
         validation_split=0.20
         )
 
@@ -56,6 +62,8 @@ datagen_black_fields_black = ImageDataGenerator(
         horizontal_flip=False,
         fill_mode='nearest',
         brightness_range=[0.7,1.3],
+        width_shift_range=0.15,
+        height_shift_range=0.15,
         validation_split=0.20
         )
 
@@ -150,7 +158,7 @@ validation_black_fields_black_generator = datagen_black_fields_black.flow_from_d
 # plt.figure(figsize=(12, 12))
 # for i in range(0, 15):
 #     plt.subplot(5, 3, i+1)
-#     for X_batch, Y_batch in black_fields_white:
+#     for X_batch, Y_batch in train_white_fields_white_generator:
 #         image = X_batch[0]
 #         figure = figures[list(Y_batch[0]).index(1)]
 #         plt.imshow(image, cmap='gray')
@@ -213,14 +221,14 @@ def learn_and_save(model_template, color_field, color_piece, train_gen, validati
     converter_model.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_quantized_model = converter_model.convert()
 
-    f = open(f'archive/pieces/{color_field}_{MODEL_NAME_TIME}_{color_piece}.tflite', "wb")
+    f = open(f'archive/pieces/{color_field}_field_{MODEL_NAME_TIME}_{color_piece}.tflite', "wb")
     f.write(tflite_quantized_model)
     f.close()
 
     f = open(f'models/{color_field}_{MODEL_NAME}_{color_piece}.tflite', "wb")
     f.write(tflite_quantized_model)
     f.close()
-    make_plot(history, f'{color_field}_{MODEL_NAME}_{color_piece}_{epochs}_epochs.png',False)
+    make_plot(history, f'{color_field}_field_{MODEL_NAME}_{color_piece}_{epochs}_epochs.png',False)
 
 
 learn_and_save(model, 'white', 'white', train_white_fields_white_generator, validation_white_fields_white_generator, batch_size)

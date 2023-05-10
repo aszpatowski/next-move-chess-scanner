@@ -1,7 +1,5 @@
 # Next Move: Chess Scanner
-Android app allows taking a photo of chessboard from PC screen with current position and thanks neural networks recognize, generate position in the app and propose the best possible move/ moves based on REST API respond (chessdb.cn) or chess engine (Stockfish). 
-
-Realized for “Project of Mobile Application” classes. Semestr 6, 2022.
+Android app allows taking a photo of chessboard from PC screen or diagram from book with current position and thanks neural networks recognize, generate position in the app and propose the best possible move/ moves based on REST API respond (chessdb.cn).
 
 ## Technologies:
 - Android Studio
@@ -16,8 +14,14 @@ Realized for “Project of Mobile Application” classes. Semestr 6, 2022.
 - Canvas (draw chessboard and pieces)
 ## Schemes of working
 ### 1
-<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/sketch/scheme1.drawio.jpg'>
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/images/diagrams/schemat_dzialania_1.png'>
 
 ### 2
-<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/sketch/scheme2.drawio.jpg'>
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/images/diagrams/algorytm_rozpoznawania_2.png'>
 
+### 3
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/images/diagrams/schemat_dzialania_2.png'>
+
+## Application
+### After load images and recognition
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/images/app/app.jpg'>

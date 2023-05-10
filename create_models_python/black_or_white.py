@@ -20,10 +20,6 @@ MODEL_NAME = f'black_or_white_model'
 MODEL_NAME_TIME = MODEL_NAME + "_" + current_time
 
 
-def rgb_to_hsv(image):
-    return cv2.cvtColor(image,cv2.COLOR_RGB2HSV)
-
-
 datagen_white_fields = ImageDataGenerator(
     rescale=1./255,
         rotation_range=5,

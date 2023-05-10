@@ -1,7 +1,7 @@
 ## Steps
-1. Run positions generator. (Make sure you have installed correct modules, check requirements.txt)
+1. Run positions generator. (Make sure you have installed correct modules, check generator/requirements.txt)
     ```
-    python generator/generator.py --pgn_file C:\chess\next-move-chess-scanner\python_notebooks_n_models\generate_data\generator\ficsgamesdb_202301_chess_nomovetimes_284372 --number_of_boards 6000 --data_output raw_data
+    python generator/generator.py --pgn_file generator\ficsgamesdb_202301_chess_nomovetimes_284372.pgn --number_of_boards 6000 --data_output raw_data
     ```
 2. Run create_separate_fields.py
     ```
@@ -24,3 +24,5 @@
     ```
     python what_piece.py
     ```
+## Scheme of working in polish
+<img src='https://raw.githubusercontent.com/aszpatowski/next-move-chess-scanner/main/images/diagrams/tworzenie_zbioru_danych.png'>
