@@ -1,5 +1,5 @@
 # Next Move: Chess Scanner
-Android app allows taking a photo of chessboard from PC screen or diagram from book with current position and thanks neural networks recognize, generate position in the app and propose the best possible move/ moves based on REST API respond (chessdb.cn). 
+Android app allows taking a photo of chessboard from PC screen or diagram from book with current position and thanks neural networks recognize, generate position in the app and propose the best possible move/ moves based on REST API respond (chessdb.cn).
 
 ## Technologies:
 - Android Studio
