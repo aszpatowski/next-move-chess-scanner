@@ -16,8 +16,7 @@ if __name__ == "__main__":
     colors = ["black", "white"]
 
     # create variables for the paths to data
-    data_black = "data\\black_fields"
-    data_white = "data\\white_fields"
+    data = "data_one_net"
 
     # create variables for the paths to raw data 
     path = "raw_data/"  # https://www.kaggle.com/datasets/koryakinp/chess-positions
@@ -45,11 +44,11 @@ if __name__ == "__main__":
     print("channels=", channels)
     one_field_size = height // 8
     print("one_field=", one_field_size)
-    create_directory_command = f"mkdir {data_black}\\blank & mkdir  {data_white}\\blank "
+    create_directory_command = f"mkdir {data}\\pieces\\blank & mkdir {data}\\boards\\blank "
 
     for color in colors:
         for piece in pieces:
-            create_directory_command += f"& mkdir {data_black}\\{piece}_{color} & mkdir {data_white}\\{piece}_{color} "
+            create_directory_command += f"& mkdir {data}\\pieces\\{piece}_{color} & mkdir {data}\\boards\\{piece}_{color} "
     print(create_directory_command)
     os.system(create_directory_command)
 
@@ -98,9 +97,11 @@ if __name__ == "__main__":
                     end_column = width
                 random_background[background_start_row:background_end_row,
                 background_start_column:background_end_column, :] = photo[start_row:end_row, start_column:end_column, :]
-                path_to_save = f"data\\{color}_fields\\{fen[row][column]}\\{sample_number}_{row}_{column}.jpg"
-                cv2.imwrite(path_to_save, random_background)
-                print(f"Saved in: {path_to_save}")
+                path_to_save_piece = f"{data}\\pieces\\{fen[row][column]}\\{sample_number}_{row}_{column}.jpg"
+                path_to_save_board = f"{data}\\boards\\{fen[row][column]}\\{sample_number}_{row}_{column}.jpg"
+                cv2.imwrite(path_to_save_piece, random_background)
+                cv2.imwrite(path_to_save_board, photo)
+                print(f"Saved in: {path_to_save_piece}")
                 if fen[row][column]=='blank':
                     blank_fields += 1
     
