@@ -507,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 field = letter + Character.toString(number);
     
                 // Recognize piece with pieceClassifier, get back pair with first being piece name and second being probability  
-                Pair<String, Float> pieceWithProbabilities = pieceClassifier.recognizePiece(imageList.get(imageNumber), isWhiteField);
+                Pair<String, Float> pieceWithProbabilities = pieceClassifier.recognizePiece(imageList.get(imageNumber));
     
                 // Create new Piece object with field name, image, piece FENname, and probability
                 tempList.add(new Piece(field, imageList.get(imageNumber), pieceWithProbabilities.first ,pieceWithProbabilities.second));
