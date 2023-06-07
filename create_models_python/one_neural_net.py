@@ -1,3 +1,4 @@
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras import models
@@ -71,5 +72,13 @@ history = model.fit(
       validation_data=validation_generator,
       validation_steps=validation_generator.samples // batch_size,
       verbose=2)
-model.save('models/one_net.h5')
+model.save('models/one_net_one_input.h5')
+
 make_plot(history, f'one_net_epochs_{EPOCHS}.png', False)
+
+converter_model = tf.lite.TFLiteConverter.from_keras_model(model)
+converter_model.optimizations = [tf.lite.Optimize.DEFAULT]
+tflite_quantized_model = converter_model.convert()
+f = open(f'models/one_net_one_input.h5', "wb")
+f.write(tflite_quantized_model)
+f.close()

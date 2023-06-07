@@ -4,5 +4,8 @@ blank_or_occupied_data/
 black_or_white_data/
 __pycache__/
 data/
+data_one_net/
+one_net*.h5
 .idea
 *.pgn
+make_tflite.py
