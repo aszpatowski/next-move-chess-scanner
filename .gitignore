@@ -9,3 +9,4 @@ one_net*.h5
 .idea
 *.pgn
 make_tflite.py
+tmp/
