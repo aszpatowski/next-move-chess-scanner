@@ -90,6 +90,8 @@ conv_base.trainable = False
 print('Liczba wag poddawanych trenowaniu '
       'po zamrożeniu bazy:', len(model.trainable_weights))
 
+print(model.summary())
+
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 checkpoint_filepath = './tmp/checkpoint'

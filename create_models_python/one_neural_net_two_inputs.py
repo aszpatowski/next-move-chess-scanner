@@ -7,7 +7,7 @@ from tensorflow.keras import models
 from keras.preprocessing.image import ImageDataGenerator
 
 from tensorflow.keras.applications import VGG16, VGG19, MobileNet, MobileNetV2
-from functions import make_plot
+from functions import make_plot, make_plot_model
 from timeit import default_timer as timer
 
 def choose_conv_base():
@@ -129,10 +129,10 @@ x_piece = layers.Dense(1024, activation='relu')(x_piece)
 
 input_board = tf.keras.Input(shape=(200, 200, 3), name="board_image")
 x_board = layers.Conv2D(32, kernel_size=(3, 3), activation="relu")(input_board)
+x_board = layers.BatchNormalization()(x_board)
 x_board = layers.MaxPooling2D(pool_size=(2, 2))(x_board)
 x_board = layers.Conv2D(64, kernel_size=(3, 3), activation="relu")(x_board)
-x_board = layers.MaxPooling2D(pool_size=(2, 2))(x_board)
-x_board = layers.Conv2D(128, kernel_size=(3, 3), activation="relu", padding="SAME")(x_board)
+x_board = layers.BatchNormalization()(x_board)
 x_board = layers.MaxPooling2D(pool_size=(2, 2))(x_board)
 x_board = layers.Flatten()(x_board)
 x_board = layers.Dense(1024, activation='relu')(x_board)
@@ -147,6 +147,8 @@ model = models.Model([input_piece, input_board], output)
 
 print(model.summary())
 
+make_plot_model(model, f'one_net_two_inputs_{name_conv_base}_less.png')
+
 print('Liczba wag poddawanych trenowaniu '
       'przed zamrożeniem bazy:', len(model.trainable_weights))
 
@@ -156,6 +158,8 @@ print('Liczba wag poddawanych trenowaniu '
       'po zamrożeniu bazy:', len(model.trainable_weights))
 
 print(model.summary())
+
+
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 

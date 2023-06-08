@@ -5,7 +5,7 @@ plugins {
 android {
     compileSdk 31
     defaultConfig {
-        applicationId "com.example.next_move_chess_scanner"
+        applicationId "com.example.next_move_chess_scanner_2"
         minSdk 24
         targetSdk 31
         versionCode 1

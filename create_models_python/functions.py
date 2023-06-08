@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from keras.utils.vis_utils import plot_model
 
 pieces = ["king", "queen", "knight", "bishop", "rook", "pawn"]
 colors = ["black", "white"]
@@ -103,3 +104,5 @@ def make_plot(model, name, binary=True):
 
     # Zapisanie wykresu do pliku
     plt.savefig(f"graphs/{name}", dpi=300, bbox_inches='tight')
+def make_plot_model(model, file_name):
+    plot_model(model, to_file=f'models_scheme/{file_name}', show_shapes=True, show_layer_names=True)
