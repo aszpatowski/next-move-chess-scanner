@@ -38,6 +38,8 @@ import android.widget.Toast;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -385,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
             try {
                 Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
                 Bitmap tempImageOfChessboard = image.copy(image.getConfig(), true);
-                imageOfChessboard = changeResolution(tempImageOfChessboard);
+                imageOfChessboard = changeResolution(tempImageOfChessboard,256,256);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -458,9 +460,9 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
 
 
     }
-    public Bitmap changeResolution(Bitmap image){
+    public Bitmap changeResolution(Bitmap image, int width, int height){
         Log.d("IMAGE", "Height: " + image.getHeight() + "  Width: " + image.getWidth());
-        Bitmap scaled = Bitmap.createScaledBitmap(image,256,256, true);
+        Bitmap scaled = Bitmap.createScaledBitmap(image,width,height, true);
         return scaled;
     }
     public List<Bitmap> divideChessboard(Bitmap chessboard){
@@ -476,6 +478,8 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     public List<Piece> createPieceList(Bitmap chessboard, boolean isWhite){
         // Divide the chessboard into individual images
         List<Bitmap> imageList = divideChessboard(chessboard);
+        Bitmap chessboardScaled = changeResolution(chessboard, 200, 200);
+        ByteBuffer chessboardBytebuffer =  convertBoardBitmapToByteBufferRGB(chessboardScaled);
         // Create strings for the letters and numbers of the board
         String alphabet = "HGFEDCBA";
         String numbers = "12345678";
@@ -507,10 +511,10 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
                 field = letter + Character.toString(number);
     
                 // Recognize piece with pieceClassifier, get back pair with first being piece name and second being probability  
-                Pair<String, Float> pieceWithProbabilities = pieceClassifier.recognizePiece(imageList.get(imageNumber));
+                Pair<String, Float> pieceWithProbabilities = pieceClassifier.recognizePiece(imageList.get(imageNumber), chessboardBytebuffer);
     
                 // Create new Piece object with field name, image, piece FENname, and probability
-                tempList.add(new Piece(field, imageList.get(imageNumber), pieceWithProbabilities.first ,pieceWithProbabilities.second));
+                tempList.add(new Piece(field, imageList.get(imageNumber), pieceWithProbabilities.first, pieceWithProbabilities.second));
     
                 // Switch between white and black fields   
                 isWhiteField = !isWhiteField;
@@ -525,6 +529,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
          return tempList; 
     
      }
+
 
     public String createFEN(List<String> pieces, boolean isPlayerBlack) {
         StringBuilder fen = new StringBuilder();
@@ -611,6 +616,30 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         chessView.setFen(currentPosition);
 
         new ChangeChessViewTask().execute();
+    }
+    private ByteBuffer convertBoardBitmapToByteBufferRGB(Bitmap bitmap){
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 200 * 200 * 3);
+        byteBuffer.order(ByteOrder.nativeOrder());
+
+        //val pixels = IntArray(inputImageWidth * inputImageHeight);
+        int[] pixels = new int[200 * 200];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        for (int pixelValue: pixels) {
+            //Log.d("BufferR", Integer.toString(pixelValue >> 16 & 255 ));
+            //Log.d("BufferG", Integer.toString(pixelValue >> 8 & 255 ));
+            //Log.d("BufferB", Integer.toString(pixelValue & 255 ));
+            float r = (pixelValue >> 16 & 255 ) / 255.0f;
+            float g = (pixelValue >> 8 & 255) / 255.0f;
+            float b = (pixelValue & 255) / 255.0f;
+
+            // conversion from rgb to grayscale and normalization 0 to 1
+            byteBuffer.putFloat(r);
+            byteBuffer.putFloat(g);
+            byteBuffer.putFloat(b);
+        }
+
+        return byteBuffer;
     }
 
 }

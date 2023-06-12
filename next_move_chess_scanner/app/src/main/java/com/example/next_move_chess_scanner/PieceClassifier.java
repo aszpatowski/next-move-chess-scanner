@@ -6,7 +6,8 @@ import android.util.Log;
 import android.util.Pair;
 
 
-import com.example.next_move_chess_scanner.ml.OneNetOneInput;
+//import com.example.next_move_chess_scanner.ml.OneNetOneInput;
+import com.example.next_move_chess_scanner.ml.OneNetTwoInputs;
 
 
 import org.tensorflow.lite.DataType;
@@ -18,13 +19,14 @@ import java.nio.ByteOrder;
 import java.lang.Float;
 
 public final class PieceClassifier {
-    private static final int inputImageWidth = 32;
-    private static final int inputImageHeight = 32;
+    private static final int inputFieldWidth = 32;
+    private static final int inputFieldHeight = 32;
+    private static final int inputBoardWidth = 200;
+    private static final int inputBoardHeight = 200;
     private static final int FLOAT_TYPE_SIZE = 4;
-    private static final int PIXEL_SIZE_GRAY = 1;
     private static final int PIXEL_SIZE_RGB = 3;
-    private static final int modelInputSize = FLOAT_TYPE_SIZE * inputImageWidth * inputImageHeight * PIXEL_SIZE_GRAY;
-    private static final int modelInputSizeRGB = FLOAT_TYPE_SIZE * inputImageWidth * inputImageHeight * PIXEL_SIZE_RGB;
+    private static final int modelFieldInputSizeRGB = FLOAT_TYPE_SIZE * inputFieldWidth * inputFieldHeight * PIXEL_SIZE_RGB;
+    private static final int modelBoardInputSizeRGB = FLOAT_TYPE_SIZE * inputBoardWidth * inputBoardHeight * PIXEL_SIZE_RGB;
     private static String[] PIECES_NAMES;
     private final Context context;
 
@@ -49,10 +51,10 @@ public final class PieceClassifier {
 
 
 
-    public Pair<String, Float> recognizePiece(Bitmap piece){
+    public Pair<String, Float> recognizePiece(Bitmap piece, ByteBuffer board){
 
-        ByteBuffer convertedBitmapRGB = convertBitmapToByteBufferRGB(piece);
-        float[] arrayWithProbabilities = recognizeField(convertedBitmapRGB);
+        ByteBuffer convertedBitmapFieldRGB = convertFieldBitmapToByteBufferRGB(piece);
+        float[] arrayWithProbabilities = recognizeField(convertedBitmapFieldRGB, board);
         int index = getMax(arrayWithProbabilities);
         return new Pair<>(PIECES_NAMES[index], arrayWithProbabilities[index]);
 
@@ -60,33 +62,12 @@ public final class PieceClassifier {
     }
 
 
-    private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap){
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(modelInputSize);
+    private ByteBuffer convertFieldBitmapToByteBufferRGB(Bitmap bitmap){
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(modelFieldInputSizeRGB);
         byteBuffer.order(ByteOrder.nativeOrder());
 
         //val pixels = IntArray(inputImageWidth * inputImageHeight);
-        int[] pixels = new int[inputImageWidth * inputImageHeight];
-        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-        for (int pixelValue: pixels) {
-            int r = (pixelValue >> 16 & 255 );
-            int g = (pixelValue >> 8 & 255);
-            int b = (pixelValue & 255);
-
-            // conversion from rgb to grayscale and normalization 0 to 1
-            float normalizedPixelValue = (r + g + b ) / 3.0f / 255.0f;
-            byteBuffer.putFloat(normalizedPixelValue);
-        }
-
-        return byteBuffer;
-    }
-
-    private ByteBuffer convertBitmapToByteBufferRGB(Bitmap bitmap){
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(modelInputSizeRGB);
-        byteBuffer.order(ByteOrder.nativeOrder());
-
-        //val pixels = IntArray(inputImageWidth * inputImageHeight);
-        int[] pixels = new int[inputImageWidth * inputImageHeight];
+        int[] pixels = new int[inputFieldWidth * inputFieldHeight];
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
         for (int pixelValue: pixels) {
@@ -107,18 +88,21 @@ public final class PieceClassifier {
     }
 
 
-    private float[] recognizeField(ByteBuffer field) {
+
+    private float[] recognizeField(ByteBuffer field, ByteBuffer board) {
         try {
-            OneNetOneInput model = OneNetOneInput.newInstance(context.getApplicationContext());
+            OneNetTwoInputs model = OneNetTwoInputs.newInstance(context.getApplicationContext());
 
             // Creates inputs for reference.
 
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 32, 32,3}, DataType.FLOAT32);
+            TensorBuffer inputFeature1 = TensorBuffer.createFixedSize(new int[]{1, 200, 200,3}, DataType.FLOAT32);
 
             inputFeature0.loadBuffer(field);
+            inputFeature1.loadBuffer(board);
 
             // Runs model inference and gets result.
-            OneNetOneInput.Outputs outputs = model.process(inputFeature0);
+            OneNetTwoInputs.Outputs outputs = model.process(inputFeature0, inputFeature1);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             // Releases model resources if no longer used.
