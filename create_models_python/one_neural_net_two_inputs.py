@@ -71,7 +71,7 @@ train_generator_pieces = datagen_pieces.flow_from_directory(
     class_mode='categorical',
     color_mode='rgb',
     seed=1,
-    shuffle=False,
+    shuffle=True,
     batch_size=batch_size,
     subset='training'
 )
@@ -81,7 +81,7 @@ validation_generator_pieces = datagen_pieces.flow_from_directory(
     class_mode='categorical',
     color_mode='rgb',
     seed=1,
-    shuffle=False,
+    shuffle=True,
     batch_size=batch_size,
     subset='validation'
 )
@@ -94,7 +94,7 @@ train_generator_boards = datagen_boards.flow_from_directory(
     class_mode='categorical',
     color_mode='rgb',
     seed=1,
-    shuffle=False,
+    shuffle=True,
     batch_size=batch_size,
     subset='training'
 )
@@ -104,7 +104,7 @@ validation_generator_boards = datagen_boards.flow_from_directory(
     class_mode='categorical',
     color_mode='rgb',
     seed=1,
-    shuffle=False,
+    shuffle=True,
     batch_size=batch_size,
     subset='validation'
 )
@@ -113,6 +113,7 @@ def generator_two_img(gen1, gen2):
     genX1 = gen1
     genX2 = gen2
     while True:
+        genX2.index_array = genX1.index_array
         X1i = genX1.next()
         X2i = genX2.next()
         yield [X1i[0], X2i[0]], X1i[1]
@@ -144,7 +145,7 @@ model = models.Model([input_piece, input_board], output)
 
 print(model.summary())
 
-make_plot_model(model, f'one_net_two_inputs_{name_conv_base}_vgg_19.png')
+make_plot_model(model, f'one_net_two_inputs_{name_conv_base}_vgg_19_shuffled.png')
 
 print('Liczba wag poddawanych trenowaniu '
       'przed zamrożeniem bazy:', len(model.trainable_weights))
@@ -179,15 +180,15 @@ history = model.fit(
       verbose=1,
       callbacks=[model_checkpoint_callback])
 
-make_plot(history, f'one_net_two_inputs_epochs_{EPOCHS}_{name_conv_base}_vgg_19.png', False)
+make_plot(history, f'one_net_two_inputs_epochs_{EPOCHS}_{name_conv_base}_vgg_19_shuffled.png', False)
 model.load_weights(checkpoint_filepath)
-model.save(f'models/one_net_two_inputs_{name_conv_base}_vgg_19.h5')
+model.save(f'models/one_net_two_inputs_{name_conv_base}_vgg_19_shuffled.h5')
 
 
 converter_model = tf.lite.TFLiteConverter.from_keras_model(model)
 converter_model.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_quantized_model = converter_model.convert()
-f = open(f'models/one_net_two_inputs_{name_conv_base}_vgg_19.tflite', "wb")
+f = open(f'models/one_net_two_inputs_{name_conv_base}_vgg_19_shuffled.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
 
