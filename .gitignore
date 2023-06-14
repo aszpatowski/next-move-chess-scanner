@@ -8,5 +8,6 @@ data_one_net/
 one_net*.h5
 .idea
 *.pgn
+*.h5
 make_tflite.py
 tmp/
