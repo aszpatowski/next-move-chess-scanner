@@ -206,15 +206,27 @@ model.summary()
 def learn_and_save(model_template, color_field, color_piece, train_gen, validation_gen, batch_size):
     model = keras.models.clone_model(model_template)
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    epochs = 100
+    epochs = 50
+
+    checkpoint_filepath = f'./tmp/checkpoint_{color_field}_field_{MODEL_NAME}_{color_piece}'
+
+    model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_filepath,
+    save_weights_only=True,
+    monitor='val_accuracy',
+    mode='max',
+    save_best_only=True)
+    
 
     history = model.fit(
         train_gen,
         steps_per_epoch = train_gen.samples // batch_size,
         validation_data = validation_gen, 
         validation_steps = validation_gen.samples // batch_size,
-        epochs = epochs)
-
+        epochs = epochs,
+        callbacks=[model_checkpoint_callback])
+    
+    model.load_weights(checkpoint_filepath)
     model.save(f'archive/pieces/{color_field}_{MODEL_NAME_TIME}_{color_piece}.h5')
 
     converter_model = tf.lite.TFLiteConverter.from_keras_model(model)

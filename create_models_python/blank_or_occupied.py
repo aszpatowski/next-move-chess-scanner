@@ -114,30 +114,50 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 40
+epochs = 10
+
+checkpoint_filepath = f'./tmp/checkpoint_white_{MODEL_NAME}'
+
+model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_filepath,
+    save_weights_only=True,
+    monitor='val_binary_accuracy',
+    mode='max',
+    save_best_only=True)
+
 
 history = white_model.fit(
     train_white_fields_generator,
     steps_per_epoch = train_white_fields_generator.samples // batch_size,
     validation_data = validation_white_fields_generator, 
     validation_steps = validation_white_fields_generator.samples // batch_size,
-    epochs = epochs)
-
+    epochs = epochs,
+    callbacks=[model_checkpoint_callback])
+white_model.load_weights(checkpoint_filepath)
 white_model.save(f'models/white_{MODEL_NAME}_all.h5')
 make_plot(history, f'white_{MODEL_NAME}_{epochs}_epochs.png')
 
+checkpoint_filepath = f'./tmp/checkpoint_black_{MODEL_NAME}'
 
+model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+    filepath=checkpoint_filepath,
+    save_weights_only=True,
+    monitor='val_binary_accuracy',
+    mode='max',
+    save_best_only=True)
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 40
+epochs = 10
 
 history = black_model.fit(
     train_black_fields_generator,
     steps_per_epoch = train_black_fields_generator.samples // batch_size,
     validation_data = validation_black_fields_generator, 
     validation_steps = validation_black_fields_generator.samples // batch_size,
-    epochs = epochs)
+    epochs = epochs,
+    callbacks=[model_checkpoint_callback])
 
+black_model.load_weights(checkpoint_filepath)
 black_model.save(f'models/black_{MODEL_NAME}_all.h5')
 make_plot(history, f'black_{MODEL_NAME}_{epochs}_epochs.png')
 
