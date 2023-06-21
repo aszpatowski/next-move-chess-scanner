@@ -137,7 +137,7 @@ white_model.summary()
 black_model = keras.models.clone_model(white_model)
 
 white_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 50
+epochs = 12
 
 checkpoint_filepath = f'./tmp/checkpoint_white_{MODEL_NAME}'
 
@@ -160,7 +160,7 @@ white_model.save(f'archive/white_{MODEL_NAME_TIME}_rgb.h5')
 make_plot(history, f'white_{MODEL_NAME}_{epochs}_epochs.png')
 
 black_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=[tf.keras.metrics.BinaryAccuracy()])
-epochs = 50
+epochs = 12
 
 checkpoint_filepath = f'./tmp/checkpoint_black_{MODEL_NAME}'
 
