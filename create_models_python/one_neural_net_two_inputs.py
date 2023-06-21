@@ -41,9 +41,9 @@ conv_base, name_conv_base = choose_conv_base()
 print(conv_base.summary())
 
 image_size_piece = (32, 32)
-image_size_board = (200, 200)
+image_size_board = (160, 160)
 batch_size = 32
-EPOCHS = 30
+EPOCHS = 10
 
 datagen_pieces = ImageDataGenerator(
         rescale=1./255,
@@ -126,32 +126,34 @@ input_piece = tf.keras.Input(shape=(32, 32, 3), name="piece_image")
 
 conv_piece = conv_base(input_piece)
 x_piece = layers.Flatten()(conv_piece) 
-x_piece = layers.Dense(1024, activation='relu')(x_piece)
+x_piece = layers.Dense(512, activation='relu')(x_piece)
 
-input_board = tf.keras.Input(shape=(200, 200, 3), name="board_image")
-conv_board = VGG19(weights='imagenet',
+input_board = tf.keras.Input(shape=(160, 160, 3), name="board_image")
+vgg16_1 = keras.models.clone_model(VGG16(weights='imagenet',
                   include_top=False,
-                  input_shape=(200, 200, 3))(input_board)
+                  input_shape=(160, 160, 3)))
+vgg16_1._name = "vgg16_1"
+conv_board = vgg16_1(input_board)
 x_board = layers.Flatten()(conv_board) 
-x_board = layers.Dense(1024, activation='relu')(x_board)
+x_board = layers.Dense(512, activation='relu')(x_board)
 
 
 concatenated = layers.concatenate([x_piece, x_board])
-x = layers.Dense(1024, activation='relu')(concatenated)
-x = layers.Dense(512, activation='relu')(x)
+x = layers.Dense(256, activation='relu')(concatenated)
+x = layers.Dense(128, activation='relu')(x)
 output = layers.Dense(13, activation='softmax')(x)
 
 model = models.Model([input_piece, input_board], output)
 
 print(model.summary())
 
-make_plot_model(model, f'one_net_two_inputs_{name_conv_base}_vgg_19_shuffled.png')
+make_plot_model(model, f'one_net_two_inputs_{name_conv_base}_vgg_16_shuffled_160_board_less_dense.png')
 
 print('Liczba wag poddawanych trenowaniu '
       'przed zamrożeniem bazy:', len(model.trainable_weights))
 
 model.layers[2].trainable = False # vgg16
-model.layers[3].trainable = False # vgg19
+model.layers[3].trainable = False # vgg16
 
 print('Liczba wag poddawanych trenowaniu '
       'po zamrożeniu bazy:', len(model.trainable_weights))
@@ -180,15 +182,15 @@ history = model.fit(
       verbose=1,
       callbacks=[model_checkpoint_callback])
 
-make_plot(history, f'one_net_two_inputs_epochs_{EPOCHS}_{name_conv_base}_vgg_19_shuffled.png', False)
+make_plot(history, f'one_net_two_inputs_epochs_{EPOCHS}_{name_conv_base}_vgg_16_shuffled_less_dense.png', False)
 model.load_weights(checkpoint_filepath)
-model.save(f'models/one_net_two_inputs_{name_conv_base}_vgg_19_shuffled.h5')
+model.save(f'models/one_net_two_inputs_{name_conv_base}_vgg_16_shuffled_less_dense.h5')
 
 
 converter_model = tf.lite.TFLiteConverter.from_keras_model(model)
 converter_model.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_quantized_model = converter_model.convert()
-f = open(f'models/one_net_two_inputs_{name_conv_base}_vgg_19_shuffled.tflite', "wb")
+f = open(f'models/one_net_two_inputs_{name_conv_base}_vgg_16_shuffled_less_dense.tflite', "wb")
 f.write(tflite_quantized_model)
 f.close()
 

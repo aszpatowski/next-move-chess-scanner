@@ -21,8 +21,8 @@ import java.lang.Float;
 public final class PieceClassifier {
     private static final int inputFieldWidth = 32;
     private static final int inputFieldHeight = 32;
-    private static final int inputBoardWidth = 200;
-    private static final int inputBoardHeight = 200;
+    private static final int inputBoardWidth = 160;
+    private static final int inputBoardHeight = 160;
     private static final int FLOAT_TYPE_SIZE = 4;
     private static final int PIXEL_SIZE_RGB = 3;
     private static final int modelFieldInputSizeRGB = FLOAT_TYPE_SIZE * inputFieldWidth * inputFieldHeight * PIXEL_SIZE_RGB;
@@ -96,7 +96,7 @@ public final class PieceClassifier {
             // Creates inputs for reference.
 
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 32, 32,3}, DataType.FLOAT32);
-            TensorBuffer inputFeature1 = TensorBuffer.createFixedSize(new int[]{1, 200, 200,3}, DataType.FLOAT32);
+            TensorBuffer inputFeature1 = TensorBuffer.createFixedSize(new int[]{1, 160, 160,3}, DataType.FLOAT32);
 
             inputFeature0.loadBuffer(field);
             inputFeature1.loadBuffer(board);

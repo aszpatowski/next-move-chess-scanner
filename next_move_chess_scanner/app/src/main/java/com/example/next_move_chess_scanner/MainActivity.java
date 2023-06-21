@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
     public List<Piece> createPieceList(Bitmap chessboard, boolean isWhite){
         // Divide the chessboard into individual images
         List<Bitmap> imageList = divideChessboard(chessboard);
-        Bitmap chessboardScaled = changeResolution(chessboard, 200, 200);
+        Bitmap chessboardScaled = changeResolution(chessboard, 160, 160);
         ByteBuffer chessboardBytebuffer =  convertBoardBitmapToByteBufferRGB(chessboardScaled);
         // Create strings for the letters and numbers of the board
         String alphabet = "HGFEDCBA";
@@ -618,11 +618,11 @@ public class MainActivity extends AppCompatActivity implements MoveListAdapter.A
         new ChangeChessViewTask().execute();
     }
     private ByteBuffer convertBoardBitmapToByteBufferRGB(Bitmap bitmap){
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 200 * 200 * 3);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 160 * 160 * 3);
         byteBuffer.order(ByteOrder.nativeOrder());
 
         //val pixels = IntArray(inputImageWidth * inputImageHeight);
-        int[] pixels = new int[200 * 200];
+        int[] pixels = new int[160 * 160];
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
         for (int pixelValue: pixels) {
