@@ -72,7 +72,7 @@ public final class PieceClassifier {
 
         for (int pixelValue: pixels) {
             //Log.d("BufferR", Integer.toString(pixelValue >> 16 & 255 ));
-            //Log.d("BufferG", Integer.toString(pixelValue >> 8 & 255 ));
+            //Log.d("BufferG", Integer.toString(pixelValue >> 8 & 255 ));z`
             //Log.d("BufferB", Integer.toString(pixelValue & 255 ));
             float r = (pixelValue >> 16 & 255 ) / 255.0f;
             float g = (pixelValue >> 8 & 255) / 255.0f;

@@ -66,15 +66,13 @@ public List<Move> sendRequest(String fenNotation) {
                         for(int i = 0; i< moves.length();i++)
                         {
                             move = moves.getJSONObject(i);
-                            movesList.add(new Move(move.getString("uci"),
+                            movesList.add(new Move(
+                                    move.getString("uci"),
                                     move.getString("san"),
                                     move.getString("note").substring(0,2),
                                     move.getString("winrate"),
                                     false));
-                            
-                            // Log each move
-                            Log.d(Tag, "move is: " + move.getString("uci"));
-                            
+
                             // If the maximum number of results has been reached, break the loop
                             if(i+1>=maxResults)
                             {
@@ -84,7 +82,6 @@ public List<Move> sendRequest(String fenNotation) {
                     } catch (JSONException e) {
                         // Print the stack trace if there is an error
                         e.printStackTrace();
-
 
                     }
                 }
